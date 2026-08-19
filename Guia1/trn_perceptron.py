@@ -20,7 +20,8 @@ def trn_perceptron(datos, tasa_de_aprendizaje, maxit):
         for j in range(N):
             y = np.sign(np.dot(w,x[j,:]))
             w = w + tasa_de_aprendizaje/2 * (y_d[j] - y)*x[j,:]
-            historial_w.append(np.copy(w))
+            if ((y_d[j] - y) != 0):
+                historial_w.append(np.copy(w))
 
         # Etapa de ratio de aciertos
         aciertos = 0
