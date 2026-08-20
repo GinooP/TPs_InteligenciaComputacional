@@ -20,3 +20,4 @@ def tst_perceptron(datos_tst,w):
     #obtenemos el ration de aciertos (aciertos / cantidad de datos del test)
     ratio= aciertos/M
     return ratio
+#jas,mnabsnmsdmns dmnsdb

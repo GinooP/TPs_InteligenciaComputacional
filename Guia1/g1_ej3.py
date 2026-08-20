@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import numpy as np
 import matplotlib.pyplot as plt
 import time
@@ -89,3 +90,6 @@ plt.grid(1)
 
 # plt.ioff()
 plt.show()
+=======
+# Ejercicio 3 de la guia 1
+>>>>>>> 308230f740ef7a04fb92238f47e05c8bcb38b3d0

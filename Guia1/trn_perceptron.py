@@ -34,3 +34,4 @@ def trn_perceptron(datos, tasa_de_aprendizaje, maxit):
 
     matriz_historial = np.array(historial_w)
     return w, ratio, matriz_historial
+#jsbdsbdnmbsdbnmsd

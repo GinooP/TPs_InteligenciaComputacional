@@ -29,3 +29,4 @@ for j in range(N):
 ratio_tst = aciertos_tst / N
 
 print(f"El ratio de aciertos del test es de: {ratio_tst*100} %")
+#hbsmnbasdbmnsdb

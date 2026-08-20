@@ -62,3 +62,4 @@ for i in range(cant_pesos):
 plt.ioff()
 
 plt.show()
+#nnnsdbnsdbndsndbsnmdbsdnm dn
