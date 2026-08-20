@@ -1,104 +1,62 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+import trn_perceptron as trn
+import tst_perceptron as tst
 
-datos_or = np.loadtxt('OR_trn.csv', delimiter=',')
-datos_xor = np.loadtxt('XOR_trn.csv', delimiter=',')
+datos_OR_trn=np.loadtxt("Guia1/OR_trn.csv",delimiter=',',skiprows=0)
+datos_XOR_trn=np.loadtxt("Guia1/XOR_trn.csv",delimiter=',',skiprows=0)
 
-yd_or = datos_or[:,2]
+#obtenemos los pesos sinapticos y el historial de pesos sinapticos
 
-yd_xor = datos_xor[:,2]
+itmax=100
+tasa_de_aprendizaje=0.1
 
-N = len(datos_or[:,0])
-M = 3
+w_OR, ratio_trn_OR, historial_w_OR = trn.trn_perceptron(datos_OR_trn,tasa_de_aprendizaje,itmax)
+w_XOR, ratio_trn_XOR, historial_w_XOR = trn.trn_perceptron(datos_XOR_trn,tasa_de_aprendizaje,itmax)
 
-x_or = -1 * np.ones((N,M))
-x_or[:,1:M] = datos_or[:,0:M-1]
+# testeamos con nuevos patrones
 
-x_xor = -1 * np.ones((N,M))
-x_xor[:,1:M] = datos_xor[:,0:M-1]
+datos_OR_tst=np.loadtxt("Guia1/OR_tst.csv",delimiter=',',skiprows=0)
+datos_XOR_tst=np.loadtxt("Guia1/XOR_tst.csv",delimiter=',',skiprows=0)
 
-w_or = np.zeros((1,M)) # Vector de pesos sinápticos
-w_xor = np.zeros((1,M)) # Vector de pesos sinápticos
+# ratio_tst_OR= tst.tst_perceptron(datos_OR_tst,w_OR)
+# ratio_tst_XOR= tst.tst_perceptron(datos_XOR_tst,w_XOR)
 
-rng = np.random.default_rng()
+######### graficamos OR ##########################
+cant_pesos = len(historial_w_XOR[:,0])
+yd_XOR=datos_XOR_tst[:,-1]# salida esperada XOR
+yd_OR=datos_OR_tst[:,-1]# salida esperada or
 
-w_or = rng.random(M) - 0.5 # Setear los pesos entre [-0.5 0.5]
-w_xor = rng.random(M) - 0.5 # Setear los pesos entre [-0.5 0.5]
-
-tasa_de_aprendizaje = 0.1
-maxit = 1
-aciertos_or = 0
-aciertos_xor = 0
+x_recta1 = np.linspace(min(datos_XOR_tst[:,0]) - 0.5, max(datos_XOR_tst[:,0]) + 0.5, 100)
+x_recta2 = np.linspace(min(datos_OR_tst[:,0]) - 0.5, max(datos_OR_tst[:,0]) + 0.5, 100)
 
 plt.ion()
+fig, ax = plt.subplots()
+fig2, ax2 = plt.subplots()
 
-fig, ax = plt.subplots(figsize=(8, 5))
-fig2, ax2 = plt.subplots(figsize=(8, 5))
+for i in range(cant_pesos):
+    # Calculo de las rectas
+    y_recta1 = historial_w_XOR[i,0]/historial_w_XOR[i,2] - (historial_w_XOR[i,1]/historial_w_XOR[i,2])*x_recta1
+    y_recta2 = historial_w_OR[i,0]/historial_w_OR[i,2] - (historial_w_OR[i,1]/historial_w_OR[i,2])*x_recta2
 
-for i in range(maxit):
-    # Etapa de aprendizaje 
-    for j in range(N):
-        y = np.sign(np.dot(w_or,x_or[j,:]))
-        w_or = w_or + tasa_de_aprendizaje/2 * (yd_or[j] - y)*x_or[j,:]
+    ax.clear()
+    ax2.clear()
 
-        ax.clear() # Limpiamos la recta anterior
-        ax.set_title(f"Evolución de frontera OR (Iteración {i}, Dato {j})")
-        ax.set_xlabel("X1")
-        ax.set_ylabel("X2")
-        
-        # Opcional pero recomendado: fijar los ejes para que el gráfico no "salte"
-        ax.set_xlim(-1.5, 1.5) 
-        ax.set_ylim(-1.5, 1.5)
-        
-        # Dibujar los puntos de datos (para ver cómo la recta los intenta separar)
-        # Usamos c=yd_or para que los pinte de distinto color según la clase esperada
-        ax.scatter(x_or[:,1], x_or[:,2], c=yd_or, cmap='bwr', s=100, edgecolors='k')
-        
-        # Calcular y dibujar la recta usando la COLUMNA 1
-        x2_frontera_or = (w_or[0]/w_or[2]) - (w_or[1]/w_or[2]) * x_or[:,1]
-        ax.plot(x_or[:,1], x2_frontera_or, color='black', linewidth=2)
-        
+    ax.scatter(datos_XOR_tst[:,0], datos_XOR_tst[:,1], c=yd_XOR, cmap='bwr')
+    ax2.scatter(datos_OR_tst[:,0], datos_OR_tst[:,1], c=yd_OR, cmap='bwr')
+    
+    ax.plot(x_recta1,y_recta1,color='green')
+    ax2.plot(x_recta2, y_recta2, color='green')
 
-        y = np.sign(np.dot(w_xor,x_xor[j,:]))
-        w_xor = w_xor + tasa_de_aprendizaje/2 * (yd_xor[j] - y)*x_xor[j,:]
-
-        ax2.clear() # Limpiamos la recta anterior
-        ax2.set_title(f"Evolución de frontera XOR (Iteración {i}, Dato {j})")
-        ax2.set_xlabel("X1")
-        ax2.set_ylabel("X2")
-        
-        # Opcional pero recomendado: fijar los ejes para que el gráfico no "salte"
-        ax2.set_xlim(-1.5, 1.5) 
-        ax2.set_ylim(-1.5, 1.5)
-        
-        # Dibujar los puntos de datos (para ver cómo la recta los intenta separar)
-        # Usamos c=yd_xor para que los pinte de distinto color según la clase esperada
-        ax2.scatter(x_xor[:,1], x_xor[:,2], c=yd_xor, cmap='bwr', s=100, edgecolors='k')
-
-        x2_frontera_xor = (w_xor[0]/w_xor[2]) - (w_xor[1]/w_xor[2])*x_xor[:,1]
-        ax2.plot(x_xor[:,1], x2_frontera_xor, color='black', linewidth=2)
-        
-        plt.pause(0.5)
-
-    # Etapa de winrate
-    aciertos_or = 0
-    for j in range(N):
-        y = np.sign(np.dot(w_or,x_or[j,:]))
-        if (yd_or[j] - y) == 0:
-            aciertos_or += 1
-    ratio_or = aciertos_or / N
-
-    aciertos_xor = 0
-    for j in range(N):
-        y = np.sign(np.dot(w_xor,x_xor[j,:]))
-        if (yd_xor[j] - y) == 0:
-            aciertos_xor += 1
-    ratio_xor = aciertos_xor / N
-
-
-print(f"Ratio OR: {ratio_or}")
-print(f"Ratio XOR: {ratio_xor}")
+    ax.set_xlim(-1.5, 1.5) 
+    ax.set_ylim(-1.5, 1.5)
+    ax.set_title("XOR")
+    ax2.set_xlim(-1.5, 1.5) 
+    ax2.set_ylim(-1.5, 1.5)
+    ax2.set_title("OR")
+    plt.pause(0.3)
 
 plt.ioff()
+
 plt.show()
