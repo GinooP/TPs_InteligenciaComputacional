@@ -9,8 +9,8 @@ datos_OR_90_trn=np.loadtxt("Guia1/OR_90_trn.csv",delimiter=',',skiprows=0)
 
 #obtenemos los pesos sinapticos y el historial de pesos sinapticos
 
-itmax=1000
-tasa_de_aprendizaje=0.2
+itmax=100
+tasa_de_aprendizaje=0.001
 
 w_OR_50, ratio_trn_OR_50, historial_w_OR_50 = trn.trn_perceptron(datos_OR_50_trn,tasa_de_aprendizaje,itmax)
 w_OR_90, ratio_trn_OR_90, historial_w_OR_90 = trn.trn_perceptron(datos_OR_90_trn,tasa_de_aprendizaje,itmax)

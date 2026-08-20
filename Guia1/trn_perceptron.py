@@ -16,12 +16,12 @@ def trn_perceptron(datos, tasa_de_aprendizaje, maxit):
     historial_w = [] # matriz con los valores que tomaron los pesos
     historial_w.append(np.copy(w))
     # Etapa de aprendizaje 
-    for i in range(maxit):
-        for j in range(N):
+    for i in range(maxit): # Recorremos las epocas
+        for j in range(N): # Recorremos los patrones
             y = np.sign(np.dot(w,x[j,:]))
             w = w + tasa_de_aprendizaje/2 * (y_d[j] - y)*x[j,:]
-            if ((y_d[j] - y) != 0):
-                historial_w.append(np.copy(w))
+            # if ((y_d[j] - y) != 0):
+            historial_w.append(np.copy(w))
 
         # Etapa de ratio de aciertos
         aciertos = 0
@@ -34,4 +34,3 @@ def trn_perceptron(datos, tasa_de_aprendizaje, maxit):
 
     matriz_historial = np.array(historial_w)
     return w, ratio, matriz_historial
-#jsbdsbdnmbsdbnmsd
