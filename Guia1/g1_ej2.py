@@ -32,8 +32,9 @@ x_recta1 = np.linspace(min(datos_XOR_tst[:,0]) - 0.5, max(datos_XOR_tst[:,0]) + 
 x_recta2 = np.linspace(min(datos_OR_tst[:,0]) - 0.5, max(datos_OR_tst[:,0]) + 0.5, 100)
 
 plt.ion()
-fig, ax = plt.subplots()
-fig2, ax2 = plt.subplots()
+# fig, ax = plt.subplots()
+# fig2, ax2 = plt.subplots()
+fig, (ax, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
 for i in range(cant_pesos):
     # Calculo de las rectas
@@ -52,11 +53,14 @@ for i in range(cant_pesos):
     ax.set_xlim(-1.5, 1.5) 
     ax.set_ylim(-1.5, 1.5)
     ax.set_title("XOR")
+    ax.grid(True, alpha=0.8)
     ax2.set_xlim(-1.5, 1.5) 
     ax2.set_ylim(-1.5, 1.5)
     ax2.set_title("OR")
-    plt.pause(0.3)
+    ax2.grid(True, alpha=0.8)
 
+    plt.pause(0.3)
+    
 plt.ioff()
 
 plt.show()
