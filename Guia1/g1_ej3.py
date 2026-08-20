@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import numpy as np
 import matplotlib.pyplot as plt
 import time
@@ -24,7 +23,7 @@ datos_OR_90_tst=np.loadtxt("Guia1/OR_90_tst.csv",delimiter=',',skiprows=0)
 ratio_tst_OR_50=tst.tst_perceptron(datos_OR_50_tst,w_OR_50)
 ratio_tst_OR_90=tst.tst_perceptron(datos_OR_90_tst,w_OR_90)
 
-print(f"el ratio de aciertos del OR 50 es: {ratio_tst_OR_50*100}%")
+print(f"El ratio de aciertos del OR 50 es: {ratio_tst_OR_50*100}%")
 print(f"El ratio de aciertos del OR 90  es: {ratio_tst_OR_90*100}%")
 
 ############### Graficamos para el OR 90 ############################
@@ -49,7 +48,7 @@ plt.grid(1)
 # for i in range(cant_pesos):
 #     x2_frontera = historial_w_OR_90[i,0]/historial_w_OR_90[i,2] - (historial_w_OR_90[i,1]/historial_w_OR_90[i,2])*datos_OR_90_tst[:,0]
 #     ax.clear()
-#     ax.scatter(datos_OR_90_tst[:,1],datos_OR_90_tst[:,0])
+#     ax.scatter(datos_OR_90_tst[:,1],datos_OR_90_tst[:,0],c=yd_OR_90,cmap='bwr')
 #     ax.plot(x2_frontera,datos_OR_90_tst[:,0],color='red')
 #     ax.set_xlim(-1.5, 1.5) 
 #     ax.set_ylim(-1.5, 1.5)
@@ -75,13 +74,14 @@ plt.xlim(-1.5, 1.5)
 plt.ylim(-1.5, 1.5)
 plt.title("OR 50")
 plt.grid(1)
+
 # plt.ion()
 # fig2, ax2 = plt.subplots()
 
 # for i in range(cant_pesos):
 #     x2_frontera = historial_w_OR_50[i,0]/historial_w_OR_50[i,2] - (historial_w_OR_50[i,1]/historial_w_OR_50[i,2])*datos_OR_50_tst[:,0]
 #     ax2.clear()
-#     ax2.scatter(datos_OR_50_tst[:,1],datos_OR_50_tst[:,0])
+#     ax2.scatter(datos_OR_50_tst[:,1],datos_OR_50_tst[:,0],c=yd_OR_50,cmap='bwr')
 #     ax2.plot(x2_frontera,datos_OR_50_tst[:,0],color='red')
 #     ax2.set_xlim(-1.5, 1.5) 
 #     ax2.set_ylim(-1.5, 1.5)
@@ -90,6 +90,3 @@ plt.grid(1)
 
 # plt.ioff()
 plt.show()
-=======
-# Ejercicio 3 de la guia 1
->>>>>>> 308230f740ef7a04fb92238f47e05c8bcb38b3d0
