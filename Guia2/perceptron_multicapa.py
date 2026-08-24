@@ -14,15 +14,19 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
     # epocas: cantidad de etapas de aprendizaje
     # tol: error aceptado/ratio de aciertos buscado
 
-    M = len(patrones[0,:]) # cantidad de entradas + bias
+    M = len(patrones[0,:]) - capas[-1] + 1# cantidad de entradas + bias
     N = len(patrones[:,0]) # cantidad de patrones
 
     # Matriz de Entradas
     x = -1 * np.ones((N,M))
-    x[:,1:M] = patrones[:,0:-1]
+    x[:,1:M] = patrones[:,0:M-1]
+    #print(x)
+    
 
     # Vector de salidas esperadas
-    d = patrones[:,-1]
+    print(capas[-1])
+    d = patrones[:,M-1:len(patrones[0,:])]#concideramos que puede haber mas salidas
+    #print(d)
 
 
     # 1. Inicialización aleatoria
@@ -57,18 +61,35 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
                 # print(vector_capas[k].y)
 
             # 3. Propagación hacia atras
-            delta = (d[j] - y) * 0.5 * (1 + y) * (1 - y)
+            sizey= len(y)
+            delta = (d[j,:] - y[1:sizey]) * 0.5 * (1 + y[1:sizey]) * (1 - y[1:sizey])
             vector_capas[-1].delta = delta
-            print(delta)
+            #print(delta)
 
-            for k in range(2, cant_capas-1):
-                delta = (vector_capas[-k].delta @ vector_capas[-k].W[:,1:-1]) * 0.5 * (1 + y) * (1 - y)
+            for k in range(2, cant_capas + 1):
+                #print(vector_capas[-k + 1].W[:,1:])
+                #print(vector_capas[-k + 1].delta)
+                delta = (vector_capas[-k + 1].delta @ vector_capas[-k + 1].W[:,1:]) * 0.5 * (1 + vector_capas[-k].y[1:]) * (1 - vector_capas[-k].y[1:])
                 vector_capas[-k].delta = delta
                 # print(delta)
+            
+            # 4. Adaptación de los pesos
+            #print(x[j,:])
+            #print(vector_capas[0].delta)
+            variacion_pesos = eta*np.outer(vector_capas[0].delta, x[j,:])
+            #print(variacion_pesos)
+            vector_capas[0].W=vector_capas[0].W + variacion_pesos
+            for k in range(1,cant_capas-1):
+                #variacion_pesos = eta * np.dot(vector_capas[k+1].delta,vector_capas[k+1].W) * (1 + vector_capas[k].y[1:])*(1 - vector_capas[k].y[1:]) * vector_capas[k-1].y
+                #print(vector_capas[k-1].y)
+                #print(vector_capas[k].delta)
+                #print(vector_capas[k].delta @ vector_capas[k-1].y)
+                variacion_pesos = eta*np.outer(vector_capas[k].delta, vector_capas[k-1].y)
+                vector_capas[k].W = vector_capas[k].W + variacion_pesos
 
             
 
-# 4. Adaptación de los pesos
+
 # 5. Iteración: vuelve a 2 hasta convergencia o finalización
 
     
