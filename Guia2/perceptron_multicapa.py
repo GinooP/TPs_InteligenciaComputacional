@@ -14,16 +14,17 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
     # epocas: cantidad de etapas de aprendizaje
     # tol: error aceptado/ratio de aciertos buscado
 
-    M = len(patrones[0,:]) # cantidad de entradas + bias
+    M = len(patrones[0,:]) - capas[-1] + 1 # cantidad de entradas + bias
     N = len(patrones[:,0]) # cantidad de patrones
 
     # Matriz de Entradas
     x = -1 * np.ones((N,M))
-    x[:,1:M] = patrones[:,0:-1]
+    x[:,1:M] = patrones[:,0:M-1]
+    # print(x)
 
-    # Vector de salidas esperadas
-    d = patrones[:,-1]
-
+    # Matriz de salidas esperadas
+    d = patrones[:,M-1::]
+    # print(d)
 
     # 1. Inicialización aleatoria
     # Inicialización de los vectores W para cada capa
@@ -57,18 +58,33 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
                 # print(vector_capas[k].y)
 
             # 3. Propagación hacia atras
-            delta = (d[j] - y) * 0.5 * (1 + y) * (1 - y)
+            delta = (d[j,:] - y[1:]) * 0.5 * (1 + y[1:]) * (1 - y[1:])
             vector_capas[-1].delta = delta
-            print(delta)
+            #print(delta)
 
-            for k in range(2, cant_capas-1):
-                delta = (vector_capas[-k].delta @ vector_capas[-k].W[:,1:-1]) * 0.5 * (1 + y) * (1 - y)
+            for k in range(2, cant_capas+1):
+                # print(vector_capas[-k + 1].W[:,1:])
+                #print(vector_capas[-k + 1].delta)
+                delta = (vector_capas[1-k].delta @ vector_capas[1-k].W[:,1:]) * 0.5 * (1 + vector_capas[-k].y[1:]) * (1 - vector_capas[-k].y[1:])
                 vector_capas[-k].delta = delta
                 # print(delta)
 
-            
+            # 4. Adaptación de los pesos
+            # print(vector_capas[0].delta)
+            deltaw = eta * np.outer(vector_capas[0].delta, x[j,:])
+            vector_capas[0].W = vector_capas[0].W + deltaw
 
-# 4. Adaptación de los pesos
-# 5. Iteración: vuelve a 2 hasta convergencia o finalización
+            for k in range(1, cant_capas):
+                # Multiplicación de vector fila x vector columna = matriz de nxm
+                deltaw = eta * np.outer(vector_capas[k].delta, vector_capas[k-1].y)
+                # print(deltaw)
+                vector_capas[k].W = vector_capas[k].W + deltaw
 
+        # 5. Iteración: vuelve a 2 hasta convergencia o finalización
+
+        # 6. Testear porcentaje de aciertos
+
+        # 7. Verificar que sea mayor a la tolerancia
+
+    return vector_capas
     
