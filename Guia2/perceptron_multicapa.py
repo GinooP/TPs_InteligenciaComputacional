@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import time
 
 class Capa:
     def __init__(self, W, y, delta):
@@ -22,11 +21,9 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
     # Matriz de Entradas
     x = -1 * np.ones((N,M))
     x[:,1:M] = patrones[:,0:M-1]
-    # print(x)
 
     # Matriz de salidas esperadas
     d = patrones[:,M-1::]
-    # print(d)
 
     # 1. Inicialización aleatoria
     # Inicialización de los vectores W para cada capa
@@ -47,13 +44,16 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
     errores = []
     ratios = []
     
-    x_recta1 = np.linspace(min(x[:,1]) - 0.5, max(x[:,1]) + 0.5, 100)
-    plt.ion()
-    fig, ax = plt.subplots(figsize=(12, 5))
+    # x_recta1 = np.linspace(min(x[:,1]) - 0.5, max(x[:,1]) + 0.5, 100)
+    # plt.ion()
+    # fig, ax = plt.subplots(figsize=(12, 5))
 
     for i in range(epocas):
 
-        
+        # rng.shuffle(patrones)
+        # x = -1 * np.ones((N,M))
+        # x[:,1:M] = patrones[:,0:M-1]
+        # d = patrones[:,M-1::]
 
         for j in range(N):
 
@@ -68,29 +68,22 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
                 y = sigmoide(z)
                 y = np.insert(y, 0, -1)
                 vector_capas[k].y = y
-                # print(vector_capas[k].y)
 
             # 3. Propagación hacia atras
             delta = (d[j,:] - y[1:]) * 0.5 * (1 + y[1:]) * (1 - y[1:])
             vector_capas[-1].delta = delta
-            #print(delta)
 
             for k in range(2, cant_capas+1):
-                # print(vector_capas[-k + 1].W[:,1:])
-                #print(vector_capas[-k + 1].delta)
                 delta = (vector_capas[1-k].delta @ vector_capas[1-k].W[:,1:]) * 0.5 * (1 + vector_capas[-k].y[1:]) * (1 - vector_capas[-k].y[1:])
                 vector_capas[-k].delta = delta
-                # print(delta)
 
             # 4. Adaptación de los pesos
-            # print(vector_capas[0].delta)
             deltaw = eta * np.outer(vector_capas[0].delta, x[j,:])
             vector_capas[0].W = vector_capas[0].W + deltaw
 
             for k in range(1, cant_capas):
                 # Multiplicación de vector fila x vector columna = matriz de nxm
                 deltaw = eta * np.outer(vector_capas[k].delta, vector_capas[k-1].y)
-                # print(deltaw)
                 vector_capas[k].W = vector_capas[k].W + deltaw
 
             
@@ -112,22 +105,24 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
                 y = np.insert(y, 0, -1)
                 vector_capas[k].y = y
 
-            # print(f'{y[1:]} || {vector_capas[-1].y}')
             if (np.sign(y[1:]) == d[j]):
                 aciertos += 1
             else:
                 error_acum += np.sum((y[1:] - d[j])**2)
-        y_recta1 = vector_capas[0].W[0,0]/vector_capas[0].W[0,2] - (vector_capas[0].W[0,1]/vector_capas[0].W[0,2])*x_recta1
-        y_recta2 = vector_capas[0].W[1,0]/vector_capas[0].W[1,2] - (vector_capas[0].W[1,1]/vector_capas[0].W[1,2])*x_recta1
-        ax.clear()
-        # ax.scatter(datos_XOR_tst[:,0], datos_XOR_tst[:,1], c=yd_XOR, cmap='bwr')
-        ax.plot(x_recta1, y_recta1, color='green', label='Neurona 1')
-        ax.plot(x_recta1, y_recta2, color='orange', label='Neurona 2')
-        ax.set_xlim(-1.5, 1.5) 
-        ax.set_ylim(-1.5, 1.5)
-        ax.set_title("XOR")
-        ax.grid(True, alpha=0.8)
-        plt.pause(0.3)
+
+        # Grafico de las rectas para el XOR
+        # y_recta1 = vector_capas[0].W[0,0]/vector_capas[0].W[0,2] - (vector_capas[0].W[0,1]/vector_capas[0].W[0,2])*x_recta1
+        # y_recta2 = vector_capas[0].W[1,0]/vector_capas[0].W[1,2] - (vector_capas[0].W[1,1]/vector_capas[0].W[1,2])*x_recta1
+        # ax.clear()
+        # ax.scatter(x[:,1], x[:,2], c=d, cmap='bwr')
+        # ax.plot(x_recta1, y_recta1, color='green', label='Neurona 1')
+        # ax.plot(x_recta1, y_recta2, color='orange', label='Neurona 2')
+        # ax.set_xlim(-1.5, 1.5) 
+        # ax.set_ylim(-1.5, 1.5)
+        # ax.set_title("XOR")
+        # ax.grid(True, alpha=0.8)
+        # plt.pause(0.3)
+
         error = (1/N) * error_acum
         errores.append(error)
         print(error)
@@ -138,9 +133,52 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
             print(f'El perceptrón multicapa convergió con un ratio de {ratios[-1]:.0f} % en la epoca {i+1}.')
             return vector_capas, np.array(ratios), np.array(errores)
 
-    plt.ioff()
+    # plt.ioff()
     print(f'Probar agregando más etapas. El perceptrón multicapa tuvo un ratio de {ratios[-1]:.0f} % en la epoca final.')
     return vector_capas, np.array(ratios), np.array(errores)
 
-    
+
+def tst_perceptron_multicapa(patrones, vector_capas, capas):
+
+    M = len(patrones[0,:]) - capas[-1] + 1 # cantidad de entradas + bias
+    N = len(patrones[:,0]) # cantidad de patrones
+
+    # Matriz de Entradas
+    x = -1 * np.ones((N,M))
+    x[:,1:M] = patrones[:,0:M-1]
+
+    # Matriz de salidas esperadas
+    d = patrones[:,M-1::]
+
+    # 1. Inicialización aleatoria
+    # Inicialización de los vectores W para cada capa
+    cant_capas = len(capas)
+
+    # Definición de la función anónima con lambda
+    sigmoide = lambda x: 2 / (1 + np.exp(-x)) - 1
+
+    aciertos = 0
+    error_acum = 0
+    for j in range(N):
+        z = vector_capas[0].W @ x[j,:]
+        y = sigmoide(z)
+        y = np.insert(y, 0, -1)
+        vector_capas[0].y = y
+
+        for k in range(1, cant_capas):
+            z = vector_capas[k].W @ vector_capas[k-1].y 
+            y = sigmoide(z)
+            y = np.insert(y, 0, -1)
+            vector_capas[k].y = y
+
+        if (np.sign(y[1:]) == d[j]):
+            aciertos += 1
+        else:
+            error_acum += np.sum((y[1:] - d[j])**2)
+
+    error = (1/N) * error_acum
+    ratio = round(aciertos/N*100, 2)
+
+    print(f'La prueba dió un resultado de: ratio = {ratio:.0f} % | error cuadrático = {error}.')
+    return ratio, error
     
