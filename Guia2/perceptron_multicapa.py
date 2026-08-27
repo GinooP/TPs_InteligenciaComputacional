@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import time
 
 class Capa:
     def __init__(self, W, y, delta):
@@ -32,6 +34,7 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
     vector_capas = []
 
     rng = np.random.default_rng()
+
     W = np.array(rng.random((capas[0], M)) - 0.5) #  Setear los pesos entre [-0.5 0.5] del vector de pesos sináptico
     vector_capas.append(Capa(W, [], []))
     for i in range(1,cant_capas):
@@ -41,7 +44,17 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
     # Definición de la función anónima con lambda
     sigmoide = lambda x: 2 / (1 + np.exp(-x)) - 1
 
+    errores = []
+    ratios = []
+    
+    x_recta1 = np.linspace(min(x[:,1]) - 0.5, max(x[:,1]) + 0.5, 100)
+    plt.ion()
+    fig, ax = plt.subplots(figsize=(12, 5))
+
     for i in range(epocas):
+
+        
+
         for j in range(N):
 
             # 2. Propagación hacia adelante
@@ -80,11 +93,54 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
                 # print(deltaw)
                 vector_capas[k].W = vector_capas[k].W + deltaw
 
+            
+
         # 5. Iteración: vuelve a 2 hasta convergencia o finalización
 
         # 6. Testear porcentaje de aciertos
+        error_acum = 0
+        aciertos = 0
+        for j in range(N):
+            z = vector_capas[0].W @ x[j,:]
+            y = sigmoide(z)
+            y = np.insert(y, 0, -1)
+            vector_capas[0].y = y
+
+            for k in range(1, cant_capas):
+                z = vector_capas[k].W @ vector_capas[k-1].y 
+                y = sigmoide(z)
+                y = np.insert(y, 0, -1)
+                vector_capas[k].y = y
+
+            # print(f'{y[1:]} || {vector_capas[-1].y}')
+            if (np.sign(y[1:]) == d[j]):
+                aciertos += 1
+            else:
+                error_acum += np.sum((y[1:] - d[j])**2)
+        y_recta1 = vector_capas[0].W[0,0]/vector_capas[0].W[0,2] - (vector_capas[0].W[0,1]/vector_capas[0].W[0,2])*x_recta1
+        y_recta2 = vector_capas[0].W[1,0]/vector_capas[0].W[1,2] - (vector_capas[0].W[1,1]/vector_capas[0].W[1,2])*x_recta1
+        ax.clear()
+        # ax.scatter(datos_XOR_tst[:,0], datos_XOR_tst[:,1], c=yd_XOR, cmap='bwr')
+        ax.plot(x_recta1, y_recta1, color='green', label='Neurona 1')
+        ax.plot(x_recta1, y_recta2, color='orange', label='Neurona 2')
+        ax.set_xlim(-1.5, 1.5) 
+        ax.set_ylim(-1.5, 1.5)
+        ax.set_title("XOR")
+        ax.grid(True, alpha=0.8)
+        plt.pause(0.3)
+        error = (1/N) * error_acum
+        errores.append(error)
+        print(error)
+        ratios.append(round(aciertos/N*100, 2))
 
         # 7. Verificar que sea mayor a la tolerancia
+        if ratios[-1] >= tol:
+            print(f'El perceptrón multicapa convergió con un ratio de {ratios[-1]:.0f} % en la epoca {i+1}.')
+            return vector_capas, np.array(ratios), np.array(errores)
 
-    return vector_capas
+    plt.ioff()
+    print(f'Probar agregando más etapas. El perceptrón multicapa tuvo un ratio de {ratios[-1]:.0f} % en la epoca final.')
+    return vector_capas, np.array(ratios), np.array(errores)
+
+    
     
