@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 class Capa:
     def __init__(self, W, y, delta):
@@ -86,6 +87,39 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
                 #print(vector_capas[k].delta @ vector_capas[k-1].y)
                 variacion_pesos = eta*np.outer(vector_capas[k].delta, vector_capas[k-1].y)
                 vector_capas[k].W = vector_capas[k].W + variacion_pesos
+
+        # 5. Iteración: vuelve a 2 hasta convergencia o finalización
+        aciertos=0
+        error_cuadratico=0
+        for j in range(N):
+            #obtenemos la salida lineal de la primer capa
+            #cambiamos la funcion sigmoidea por la signo para para la verificación
+            z = vector_capas[0].W @ x[j,:] 
+            y = sigmoide(z)
+            y = np.insert(y, 0, -1)
+            vector_capas[0].y = y
+
+            for k in range(1, cant_capas):
+                z = vector_capas[k].W @ vector_capas[k-1].y 
+                y = sigmoide(z)
+                y = np.insert(y, 0, -1)
+                vector_capas[k].y = y
+
+            #print(vector_capas[-1].y)
+            error_cuadratico += (d[j] - vector_capas[-1].y[-1])**2
+            if(np.sign(vector_capas[-1].y[-1]) == d[j,:]):
+                aciertos += 1
+
+        #print(vector_capas[-1].y)
+        error_cuadratico= error_cuadratico/N
+        ratio_aciertos=aciertos/N #aciertos/cantidad de patrones
+        #print(f"ratio de aciertos: {ratio_aciertos} epoca: {i}")
+        print(f"ratio de aciertos: {ratio_aciertos} |||| error cuadratico: {error_cuadratico} ||||| epoca: {i}")
+        if (ratio_aciertos==1):
+            print(f"converge en la epoca: {i}")
+            break
+
+
 
             
 
