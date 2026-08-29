@@ -125,8 +125,8 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
 
         error = (1/N) * error_acum
         errores.append(error)
-        print(error)
         ratios.append(round(aciertos/N*100, 2))
+        print(f'Error = {error:.5f} | Ratio = {ratios[-1]} | Epoca = {i+1}')
 
         # 7. Verificar que sea mayor a la tolerancia
         if ratios[-1] >= tol:
