@@ -45,6 +45,9 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
     # Definición de la función anónima con lambda
     sigmoide = lambda x: 2 / (1 + np.exp(-x)) - 1
 
+    numero_epoca=0
+    error_cuadratico=0
+    ratio_aciertos=0
     for i in range(epocas):
         for j in range(N):
 
@@ -115,12 +118,12 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol):
         ratio_aciertos=aciertos/N #aciertos/cantidad de patrones
         #print(f"ratio de aciertos: {ratio_aciertos} epoca: {i}")
         print(f"ratio de aciertos: {ratio_aciertos} |||| error cuadratico: {error_cuadratico} ||||| epoca: {i}")
+        numero_epoca=i
+
         if (ratio_aciertos==1):
             print(f"converge en la epoca: {i}")
             break
-
-
-
+    print(f"ratio de aciertos: {ratio_aciertos} |||| error cuadratico: {error_cuadratico} ||||| epoca: {i}")
             
 
 
