@@ -9,7 +9,7 @@ epocas = 500
 capas = [2,1]
 tol = 100
 
-vector_capas, ratios, errores = mp.generar_perceptron_multicapa(capas, patrones, eta, epocas, tol)
+vector_capas, ratios, errores, errores_de_clasificacion = mp.generar_perceptron_multicapa(capas, patrones, eta, epocas, tol)
 
 
 patrones_tst = np.loadtxt('Guia1/XOR_tst.csv', delimiter=',', skiprows=0)
