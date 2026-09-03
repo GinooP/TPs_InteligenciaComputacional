@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import perceptron_multicapa as mp
+import perceptron_multicapa_tst as pm_tst
 
 # Etapa de Entrenamiento
 
@@ -11,4 +12,4 @@ epocas = 100
 capas = [2,1]
 tol = 1
 
-mp.generar_perceptron_multicapa(capas, patrones, eta, epocas, tol)
+vector_capas,error_clasificacion= mp.generar_perceptron_multicapa(capas, patrones, eta, epocas, tol)
