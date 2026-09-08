@@ -9,7 +9,7 @@ patrones = np.array([
 ])
 W = rh.red_hopfield(patrones)
 
-patron = np.array([1,1,-1,-1,-1,1,1,1,-1,-1,-1,1,1,-1,-1,-1,1,1,1,-1,-1,1,-1,1,1])
+patron = np.array([1,1,-1,-1,-1,-1,1,1,-1,-1,-1,-1,1,-1,-1,-1,-1,1,1,-1,-1,-1,-1,-1,1])
 y, historial, epoca = rh.recuperar_rh(patron,W)
 print(y)
 

@@ -121,8 +121,8 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol, one_hot=Fals
         #     else:
         #         error_de_clasificacion += 1
 
-        # 6. Testear porcentaje de aciertos (VECTORIZADO)
-        # Transponemos 'x' para operar sobre todos los patrones a la vez: forma (M, N)
+        # # 6. Testear porcentaje de aciertos (VECTORIZADO)
+        # # Transponemos 'x' para operar sobre todos los patrones a la vez: forma (M, N)
         Y_eval = x.T 
         
         for k in range(cant_capas):
@@ -166,7 +166,7 @@ def generar_perceptron_multicapa(capas, patrones, eta, epocas, tol, one_hot=Fals
         errores.append(error)
         ratios.append(aciertos/N*100)
         errores_de_clasificacion.append(error_de_clasificacion)
-        print(f'Error = {error:.8f} | Ratio = {ratios[-1]:.2f} | Epoca = {i+1}')
+        # print(f'Error = {error:.8f} | Ratio = {ratios[-1]:.2f} | Epoca = {i+1}')
 
         # 7. Verificar que sea mayor a la tolerancia
         if ratios[-1] >= tol:

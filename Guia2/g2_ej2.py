@@ -7,10 +7,10 @@ inicio = time.perf_counter()
 # Etapa de Entrenamiento
 patrones = np.loadtxt('Guia2/concent_trn.csv', delimiter=',', skiprows=0)
 patrones_tst = np.loadtxt('Guia2/concent_trn.csv', delimiter=',', skiprows=0)
-eta = 0.01
-epocas = 5000
+eta = 0.05
+epocas = 1000
 capas = [6,1] # [6,6,1]
-tol = 100
+tol = 98
 
 vector_capas, ratios, errores, errores_de_clasificacion = mp.generar_perceptron_multicapa(capas, patrones, eta, epocas, tol)
 
