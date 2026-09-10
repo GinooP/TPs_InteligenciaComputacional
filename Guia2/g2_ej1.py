@@ -12,4 +12,4 @@ epocas = 100
 capas = [2,1]
 tol = 1
 
-vector_capas,error_clasificacion= mp.generar_perceptron_multicapa(capas, patrones, eta, epocas, tol)
+vector_capas,error_clasificacion= mp.generar_perceptron_multicapa(capas, patrones, eta, epocas, tol,False)

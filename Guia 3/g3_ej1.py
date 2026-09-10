@@ -25,7 +25,7 @@ y = np.array([10, 20, 30, 40, 50, 60, 70, 80])
 # si a test_size le doy un valor entero (test_size=2) indica que voy a tener exactamente dos muestras en la prueba
 # y el resto de las muestras van a estar en el entrenamiento
  
-X_train, X_test, Y_train, Y_test = train_test_split(X,y, test_size=0.25,random_state=42)
+X_train, X_test, Y_train, Y_test = train_test_split(X,y, test_size=0.25,shuffle=True)
 
 
 print(f"X_train: {X_train}")
@@ -90,8 +90,9 @@ X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.25,random_state
 
 eta=0.01
 epocas=200
+tol=1e-4
 modelo = MLPClassifier(hidden_layer_sizes=(100,80),activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
-                       random_state=42,tol=1e-4,verbose=True)
+                       random_state=42,tol=tol,verbose=True)
 
 modelo.fit(X_train,Y_train)#entrenamos el modelo
 
