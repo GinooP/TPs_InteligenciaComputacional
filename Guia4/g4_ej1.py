@@ -8,4 +8,4 @@ vecindad=3
 eta=0.9
 cuadrado=False
 
-S.som(patrones, dim_matriz_neuronas, epocas, eta, vecindad,cuadrado, graf=True)
+S.som(patrones, dim_matriz_neuronas, epocas, eta, vecindad, cuadrado, graf=True)

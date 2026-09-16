@@ -4,35 +4,11 @@ import matplotlib.pyplot as plt
 def buscar_indice_activacion(matriz_neuronas,patron):
 
     distancias = np.sum((patron - matriz_neuronas)**2, axis=2)
-
     pos_act = np.unravel_index(np.argmin(distancias), distancias.shape)
-
-    #busca la menor distancia
-    #primero busca en la primera fila
-    #print(f"matriz_neuironas= {matriz_neuronas[0,0]}")
-    #print(f"patron: {patron}")
-    # menor = sum((patron - matriz_neuronas[0,0])**2)
-    # #print(f"este es el menor: {menor}")
-    # pos_act = (0,0)
-    # for j  in range(1,dim_matriz_neuronas[1]):
-    #     dist = sum((patron - matriz_neuronas[0,j])**2)#distancia euclidea (sin la raiz cuadrada)
-
-    #     if(dist < menor):
-    #         menor=dist
-    #         pos_act=(0,j)
-
-    # #luego busca en el resto de la matriz
-    # for i in range(dim_matriz_neuronas[0]):
-    #     for j in range(dim_matriz_neuronas[1]):
-    #         dist = sum((patron - matriz_neuronas[i,j])**2)#distancia euclidea (sin la raiz cuadrada)
-
-    #         if(dist < menor):
-    #             menor=dist
-    #             pos_act=(i,j)
 
     return pos_act
 
-def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado, graf):
+def som(patrones, dim_matriz_neuronas, epocas, eta, vecindad, cuadrado, graf):
     #cuadrado=indica si la vencidad tiene forma cuadrada o de rombo
     #vecindad = determina hasta cuantos vecinos tomamos (con forma de rombo o cuadrado dependiendo del bool
     #dim_matriz_neuronas: dimensiones de la matriz de neuronas (filas,columnas)
@@ -76,19 +52,27 @@ def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado, graf):
     while(etapa<3):
 
         cant_epocas = epocas[etapa]
+        print(f"Etapa = {etapa+1}. Ejecutando...")
         for n in range(cant_epocas):
 
-            print(f"epocas={n}")
+            # print(f"epocas={n}")
             for k in range(cant_patrones):#recorremos los patrones
+<<<<<<< HEAD
                 #buscamos la neurona que debe activarse
                 pos_act=buscar_indice_activacion(matriz_neuronas,patrones[k]) # funciona pero lo podria cambiar por una operacion vectorial ahora que solucione las dimensiones
+=======
+>>>>>>> beffcbad85800d41322f33e3eab1085c87fc0d48
 
-                ############## actualizamos los pesos ###########################
-                if(vecindad!=0):
+                # buscamos la neurona que debe activarse (la mas cercana topologicamente)
+                pos_act = buscar_indice_activacion(matriz_neuronas,patrones[k])
+
+                ############################ ACTUALIZAMOS LOS PESOS ############################
+                
+                if(vecindad != 0): # si 
                     #obtenemos desplazamientos hacia la izquierda, derecha ,arriba y abajo para no salirnos del margen
                     #desp_arriba
                     if(pos_act[0] - vecindad < 0):
-                        desp_arriba=pos_act[0] #si i_act=0 no me puedo desplazar para arriba. si i_act=1 solo me puedo desplazar un lugar para arriba y así
+                        desp_arriba = pos_act[0] #si i_act=0 no me puedo desplazar para arriba. si i_act=1 solo me puedo desplazar un lugar para arriba y así
                     else:
                         desp_arriba=vecindad
 
@@ -118,10 +102,6 @@ def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado, graf):
                         matriz_neuronas[pos_act[0]-desp_arriba:pos_act[0]+desp_abajo, pos_act[1]-desp_izq:pos_act[1]+desp_der] += delta_pesos
                     else:
                         #con esto formamos un rombo
-
-                        #esto no funciona
-                        # filas, columnas,profudidad = np.indices(matriz_neuronas.shape)
-                        # matriz_neuronas[abs(filas - pos_act[0]) + abs(columnas - pos_act[1]) <= vecindad] += eta*(patrones[k] - matriz_neuronas[abs(filas - pos_act[0]) + abs(columnas - pos_act[1]) <= vecindad])
 
                         #recorremos un rango desde la esquina superior izquierda hasta la esquina inferior derecha
                         # de un rango reducido de celdas para determinar si estan dentro de la vecindad para actualizar sus pesos
@@ -235,7 +215,54 @@ def tst_SOM(matriz_neuronas,entradas,salidas):
                     
                     
                     
+def clasificar_neuronas(matriz_neuronas, entradas, salidas):
 
+    nro_patrones = len(entradas[:,0])
+    nro_salidas = len(salidas[0,:])
+    nro_filas = len(matriz_neuronas[:,0])
+    nro_columnas = len(matriz_neuronas[0,:])
+
+    clasificacion = np.zeros((nro_filas, nro_columnas, nro_salidas))
+
+    for i in range(nro_patrones):
+
+        pos_act = buscar_indice_activacion(matriz_neuronas, entradas[i])
+        ind_c = np.argmax(salidas[i,:])
+
+        clasificacion[pos_act[0], pos_act[1], ind_c] += 1
+    
+    for i in range(nro_filas):
+
+        for j in range(nro_columnas):
+
+            ind_max = np.argmax(clasificacion[i,j,:])
+            clasificacion[i,j,:] = -1
+            clasificacion[i,j,ind_max] = 1
+
+    return clasificacion
+
+
+def tst_som(matriz_neuronas,entradas,salidas):
+    cant_salidas=len(salidas[0,:])
+    cant_patrones=len(entradas[:,0])
+    filas = len(matriz_neuronas[:,0])
+    columnas = len(matriz_neuronas[0,:])
+
+    clasificacion = clasificar_neuronas(matriz_neuronas, entradas,salidas)
+
+    matriz_contingencia=np.zeros((cant_salidas,cant_salidas))
+
+    for i in range(cant_patrones):
+
+        ind_act=buscar_indice_activacion(matriz_neuronas, patron=entradas[i,:])
+
+        salida_correcta= np.argmax(salidas[i,:])
+        salida_predicha= np.argmax(clasificacion[ind_act[0],ind_act[1],:])
+
+        matriz_contingencia[salida_correcta,salida_predicha] += 1
+
+    print(f"matriz contingencia SOM \n {matriz_contingencia}")
+    return matriz_contingencia
                 
 
                     

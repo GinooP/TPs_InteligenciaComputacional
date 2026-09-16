@@ -1,26 +1,34 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import k_means as km
 import SOM as s
 import matplotlib.pyplot as plt
 
 patrones_trn = np.loadtxt('Guia2/iris81_trn.csv', delimiter=',', skiprows=0)
+patrones_tst = np.loadtxt('Guia2/iris81_tst.csv', delimiter=',', skiprows=0)
 
 patrones_tst = np.loadtxt('Guia2/iris81_tst.csv', delimiter=',', skiprows=0)
 
 # K medias
 patrones = patrones_trn[:,0:4]
+<<<<<<< HEAD
 nro_grupos = 5
 epocas = 100
+=======
+nro_grupos = 3
+epocas = 1000
+>>>>>>> beffcbad85800d41322f33e3eab1085c87fc0d48
 K, lotes_patrones = km.k_means(patrones, nro_grupos, epocas)
 print(f"estos son los centroides:\n {K}")
 
 # SOM
 dim_matriz_neuronas = [6, 6]
 eta = 0.9
-vecindad = 3
+vecindad = 6
 cuadrado = False
 epocas = [100, 200, 300]
 matriz_neuronas = s.som(patrones, dim_matriz_neuronas, epocas, eta, vecindad, cuadrado, graf=False)
+<<<<<<< HEAD
 
 
 
@@ -59,6 +67,30 @@ print(f"compactitud_global= {compactitud_global}")
 # plt.show()
 
 
+=======
+
+# Matriz de Contingencia
+entradas = patrones_trn[:,0:4]
+salidas = patrones_trn[:,4:7]
+matriz_contingencia_k = km.tst_k_means(K, lotes_patrones, entradas, salidas)
+
+matriz_contingencia_SOM = s.tst_som(matriz_neuronas, entradas, salidas)
+
+#graficamos los puntos en una dimension
+mascara_iris1= salidas[:,0] == 1
+mascara_iris2= salidas[:,1] == 1
+mascara_iris3= salidas[:,2] == 1
+
+plt.figure(0)
+plt.scatter(entradas[mascara_iris1,0],entradas[mascara_iris1,1],color='blue',label="iris1")
+plt.scatter(entradas[mascara_iris2,0],entradas[mascara_iris2,1],color='orange',label="iris2")
+plt.scatter(entradas[mascara_iris3,0],entradas[mascara_iris3,1],color='violet',label="iris3")
+plt.scatter(K[:,0],K[:,1],color="black",label="centroides")
+plt.title("Distribucion de las iris y los centroides")
+plt.legend()
+# plt.show()
+
+>>>>>>> beffcbad85800d41322f33e3eab1085c87fc0d48
 # --- AGREGAR AL FINAL DE TU SCRIPT ---
 
 # 1. Inicializar matrices para frecuencias y clases
@@ -81,7 +113,11 @@ for i in range(len(entradas)):
     mapa_votos_clases[pos_act[0], pos_act[1], clase_real] += 1
 
 # 3. Graficar el Mapa 2D
+<<<<<<< HEAD
 plt.figure(figsize=(10, 8))
+=======
+plt.figure(num=1, figsize=(10, 8))
+>>>>>>> beffcbad85800d41322f33e3eab1085c87fc0d48
 
 # Usamos imshow para crear una grilla de colores basada en las frecuencias
 # cmap='Blues' mostrará celdas blancas para 0 activaciones y azul oscuro para muchas
