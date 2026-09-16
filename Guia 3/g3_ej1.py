@@ -17,7 +17,7 @@ X = np.array([
 
 y = np.array([10, 20, 30, 40, 50, 60, 70, 80])
 
-#train_test_split me separa los patrones (ya divididos en entradas y salidas) en un conjunto para entrenamiento y otro para pruebas
+#train_test_split separa los patrones (ya divididos en entradas y salidas) en un conjunto para entrenamiento y otro para pruebas
 #con test_size controlamos que proporcion de los datos van para el test
 # con test_size=0.25 el 25% va para el test y otro 75% para el entrenamiento
 # tambien se usar train_size de la misma forma (si se omite uno de los dos el otro se calcula en base al disponible)
@@ -91,7 +91,7 @@ X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.25,random_state
 eta=0.01
 epocas=200
 tol=1e-4
-modelo = MLPClassifier(hidden_layer_sizes=(100,80),activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
+modelo = MLPClassifier(hidden_layer_sizes=(30,30),activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
                        random_state=42,tol=tol,verbose=True)
 
 modelo.fit(X_train,Y_train)#entrenamos el modelo
@@ -119,7 +119,7 @@ for i,(index_train,index_test) in enumerate(fk.split(X)):
     Y_test = Y[index_test]
 
     #definimos el modelo dentro del for para entrenar el mismo modelo con cada fold
-    modelo = MLPClassifier(hidden_layer_sizes=(100,80),activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
+    modelo = MLPClassifier(hidden_layer_sizes=(30,30),activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
                        random_state=42, tol=tol, verbose=False) #para que no muestre en consola todo el proceso
 
     #nota: una optimizacion posible es hacer modelo.fit(X[index_train],Y[index_train]) y lo mismo en test para no ocupar tanta memoria
@@ -155,7 +155,7 @@ for i,(index_train,index_test) in enumerate(fk.split(X)):
     Y_test = Y[index_test]
 
     #definimos el modelo dentro del for para entrenar el mismo modelo con cada fold
-    modelo = MLPClassifier(hidden_layer_sizes=(100,80),activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
+    modelo = MLPClassifier(hidden_layer_sizes=(30,30),activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
                        random_state=42, tol=tol, verbose=False) #para que no muestre en consola todo el proceso
 
     #nota: una optimizacion posible es hacer modelo.fit(X[index_train],Y[index_train]) y lo mismo en test para no ocupar tanta memoria

@@ -3,28 +3,30 @@ import matplotlib.pyplot as plt
 
 def buscar_indice_activacion(matriz_neuronas,dim_matriz_neuronas,patron):
 
-    #busca la menor distancia
-    #primero busca en la primera fila
-    #print(f"matriz_neuironas= {matriz_neuronas[0,0]}")
-    #print(f"patron: {patron}")
-    menor= sum((patron - matriz_neuronas[0,0])**2)
-    #print(f"este es el menor: {menor}")
-    pos_act=(0,0)
-    for j  in range(1,dim_matriz_neuronas[1]):
-        dist = sum((patron - matriz_neuronas[0,j])**2)#distancia euclidea (sin la raiz cuadrada)
+    distancias = np.sum((patron - matriz_neuronas)**2, axis=2)
+    pos_act = np.unravel_index(np.argmin(distancias), distancias.shape)
+    # #busca la menor distancia
+    # #primero busca en la primera fila
+    # #print(f"matriz_neuironas= {matriz_neuronas[0,0]}")
+    # #print(f"patron: {patron}")
+    # menor= sum((patron - matriz_neuronas[0,0])**2)
+    # #print(f"este es el menor: {menor}")
+    # pos_act=(0,0)
+    # for j  in range(1,dim_matriz_neuronas[1]):
+    #     dist = sum((patron - matriz_neuronas[0,j])**2)#distancia euclidea (sin la raiz cuadrada)
 
-        if(dist < menor):
-            menor=dist
-            pos_act=(0,j)
+    #     if(dist < menor):
+    #         menor=dist
+    #         pos_act=(0,j)
 
-    #luego busca en el resto de la matriz
-    for i in range(dim_matriz_neuronas[0]):
-        for j in range(dim_matriz_neuronas[1]):
-            dist = sum((patron - matriz_neuronas[i,j])**2)#distancia euclidea (sin la raiz cuadrada)
+    # #luego busca en el resto de la matriz
+    # for i in range(dim_matriz_neuronas[0]):
+    #     for j in range(dim_matriz_neuronas[1]):
+    #         dist = sum((patron - matriz_neuronas[i,j])**2)#distancia euclidea (sin la raiz cuadrada)
 
-            if(dist < menor):
-                menor=dist
-                pos_act=(i,j)
+    #         if(dist < menor):
+    #             menor=dist
+    #             pos_act=(i,j)
 
     return pos_act
 
@@ -39,7 +41,7 @@ def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado):
     cant_patrones=len(patrones[:,1])#obtenemos la cantidad de patrones
 
     rng = np.random.default_rng()
-    matriz_neuronas= rng.random(size=(dim_matriz_neuronas[0],dim_matriz_neuronas[1],N))
+    matriz_neuronas= rng.random(size=(dim_matriz_neuronas[0],dim_matriz_neuronas[1],N)) - 0.5
 
     ##################################
     m=(1 - vecindad)/epocas[1]#pendiente de la recta
@@ -155,8 +157,6 @@ def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado):
     plt.show()
 
 
-    #deberiamos poder hacer que tanto la vecindad como el eta se reduzcan en forma lineal...
-    #... o tomar unos valores para la primera etapa , otros para la segundo y otro para la ultima
                     
                     
                     
