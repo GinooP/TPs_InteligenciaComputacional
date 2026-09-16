@@ -13,6 +13,17 @@ def k_means(patrones, nro_grupos, epocas):
     rng = np.random.default_rng()
     indices_random = rng.choice(N, size=nro_grupos, replace=False)
     K = patrones[indices_random,:]
+
+    #incializacion buscando los k mas lejanos entre si
+    # indice_random=rng.choice(N,size=1, replace=False)
+    # K[0]=patrones[indice_random,:]
+    # for i in range(nro_grupos):
+    #     for j in range(N):
+    #         distancia= sum((K - patrones[j,:])**2)
+    #         ind_max=np.argmax(distancia)
+
+        
+        
     
     lotes_patrones = np.zeros(N)
     # print(lotes_patrones)
@@ -22,12 +33,15 @@ def k_means(patrones, nro_grupos, epocas):
         centroides[:,:] = 0
         cant_patrones_centroide = np.zeros((nro_grupos,1))
         # 2. Dividir los patrones en los lotes
+        hubo_reasignacion=False#variable bandera que sirve para ver si hubo reasignaciones
         for j in range(N):
             # 2.1. Calcular la distancia a los K
             distancia = np.sum((K - patrones[j,:])**2,axis=1)
 
             # 2.2. Agrupar los patrones
             ind_lote = np.argmin(distancia)
+            if(hubo_reasignacion == False and ind_lote != lotes_patrones[j] ):
+                hubo_reasignacion=True #si hubo reasigancion ponemos la bandera en true
             lotes_patrones[j] = ind_lote
 
             # 3. Calcular los centroides de cada lote
@@ -43,7 +57,10 @@ def k_means(patrones, nro_grupos, epocas):
                 centroides[j] /= cant_patrones_centroide[j]
             
         # 4. Mover el K de cada lote hacia el centroide
-        K = centroides
+        K = centroides.copy()
+        if(hubo_reasignacion == False):# si no hubo reasignaciones cortamos
+            print(f"convergencia del k-medias en la epoca {i}")
+            break
 
     return K, lotes_patrones
 
@@ -62,6 +79,8 @@ def clasificar_K(K, lotes_patrones, salidas):
         # print(ind_c)
         clasificacion[ind_k, ind_c] += 1
 
+    print(f"resultado del conteo: \n {clasificacion}")
+
     for i in range(nro_lotes):
         ind_max = np.argmax(clasificacion[i,:])
         clasificacion[i,:] = -1
@@ -74,12 +93,13 @@ def tst_k_means(K, lotes_patrones, entradas, salidas):
     nro_salidas = len(salidas[0,:])
 
     clasificacion = clasificar_K(K, lotes_patrones, salidas)
+    print(f"esta es la clasificacion \n {clasificacion}")
 
     matriz_contingencia = np.zeros((nro_salidas,nro_salidas))
     lotes_patrones = np.zeros((nro_patrones))
 
     for i in range(nro_patrones):
-
+        
         distancia = np.sum((K - entradas[i,:])**2,axis=1)
         
         # Agrupar los patrones
@@ -92,3 +112,29 @@ def tst_k_means(K, lotes_patrones, entradas, salidas):
         matriz_contingencia[ind_fila,ind_col] += 1
 
     return matriz_contingencia
+
+def calcular_compactitud(k,lotes_patrones,entradas):
+    cant_clusters = len(k[:,0])
+    cant_patrones = len(entradas[:,0])
+
+    compactidudes=np.zeros((cant_clusters))
+    cont_cant_patrones_x_cluster=np.zeros((cant_clusters))
+    for i in range(cant_patrones):
+        #distancia = sum((k - entradas[i,:])**2)
+        ind_cluster=int(lotes_patrones[i])
+        distancia= np.linalg.norm(k[ind_cluster] - entradas[i,:],2)
+
+        
+        print(ind_cluster)
+        cont_cant_patrones_x_cluster[ind_cluster] += 1
+
+        compactidudes[ind_cluster] += distancia
+
+    for i in range(cant_clusters):
+        if (cont_cant_patrones_x_cluster[i] != 0):
+            compactidudes[i]= compactidudes[i]/cont_cant_patrones_x_cluster[i]
+        else:
+            compactidudes[i]=0
+
+    compactitud_global= sum(compactidudes)/len(compactidudes[:])
+    return compactidudes,compactitud_global
