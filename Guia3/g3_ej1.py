@@ -13,8 +13,8 @@ X= digits.data
 Y= digits.target
 
 #miramos las dimensiones de las entradas y salidas
-print(f"X_shape= {X.shape}")
-print(f"Y_shape= {Y.shape}")
+# print(f"X_shape= {X.shape}")
+# print(f"Y_shape= {Y.shape}")
 
 #hacemos una particion de los datos con train_test_split
 X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.25,random_state=42)
@@ -35,8 +35,8 @@ X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.25,random_state
 
 eta=0.01
 epocas=200
-modelo = MLPClassifier(hidden_layer_sizes=(100,80),activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
-                       random_state=42,tol=1e-4,verbose=True)
+modelo = MLPClassifier(hidden_layer_sizes=(30,30),activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
+                       random_state=42,tol=1e-4,verbose=False)
 
 modelo.fit(X_train,Y_train)#entrenamos el modelo
 
@@ -45,7 +45,7 @@ ratio_aciertos = modelo.score(X_test,Y_test) #ratio_aciertos = predicciones_corr
 print(f"Ratio de aciertos = {ratio_aciertos}")
 
 # Fold con 5 particiones
-print("####################### Utilizando KFold con 5 particiones ###################################")
+print("\n####################### Utilizando KFold con 5 particiones ###################################\n")
 eta =0.01
 epocas=500
 tol=1e-4
@@ -63,7 +63,7 @@ for i,(index_train,index_test) in enumerate(fk.split(X)):
     Y_test = Y[index_test]
 
     #definimos el modelo dentro del for para entrenar el mismo modelo con cada fold
-    modelo = MLPClassifier(hidden_layer_sizes=(100,80),activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
+    modelo = MLPClassifier(hidden_layer_sizes=(30,30),activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
                        random_state=42, tol=tol, verbose=False) #para que no muestre en consola todo el proceso
 
     #nota: una optimizacion posible es hacer modelo.fit(X[index_train],Y[index_train]) y lo mismo en test para no ocupar tanta memoria
@@ -86,7 +86,7 @@ print(f"Media del ratio de aciertos= {media_ratio_aciertos} |||| Varianza del ra
 
 
 ######### utilizando KFold con 10 particiones ###################################
-print("############################### Utilizando KFold con 10 particiones ############################")
+print("\n############################### Utilizando KFold con 10 particiones ############################\n")
 fk= KFold(n_splits=10)#lo dejamos con shufle en false
 
 vector_aciertos=np.array([])
@@ -100,7 +100,7 @@ for i,(index_train,index_test) in enumerate(fk.split(X)):
     Y_test = Y[index_test]
 
     #definimos el modelo dentro del for para entrenar el mismo modelo con cada fold
-    modelo = MLPClassifier(hidden_layer_sizes=(100,80),activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
+    modelo = MLPClassifier(hidden_layer_sizes=(30,30),activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
                        random_state=42, tol=tol, verbose=False) #para que no muestre en consola todo el proceso
 
     #nota: una optimizacion posible es hacer modelo.fit(X[index_train],Y[index_train]) y lo mismo en test para no ocupar tanta memoria

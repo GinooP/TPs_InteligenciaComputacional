@@ -60,10 +60,10 @@ for i,(index_train,index_test) in enumerate(fk.split(X)):
     Y_test = Y[index_test]
 
     # --- 1. Perceptrón Multicapa (MLP) ---
-    modelo = MLPClassifier(hidden_layer_sizes=(1000),activation='logistic',solver='sgd',max_iter=epocas,
-                       random_state=42, tol=tol, verbose=False, n_iter_no_change=100, learning_rate='adaptive') #para que no muestre en consola todo el proceso
-    modelo.fit(X_train,Y_train)
-    vector_aciertos.append(modelo.score(X_test,Y_test))
+    # modelo = MLPClassifier(hidden_layer_sizes=(1000),activation='logistic',solver='sgd',max_iter=epocas,
+    #                    random_state=42, tol=tol, verbose=False, n_iter_no_change=100, learning_rate='adaptive') #para que no muestre en consola todo el proceso
+    # modelo.fit(X_train,Y_train)
+    # vector_aciertos.append(modelo.score(X_test,Y_test))
     
     # neuronas = (100,100), eta = 0.0001, epocas = 20000 -> Media = 0.6746 | Varianza = 0.005943
     #   Ratios obtenidos = [0.6388888888888888, 0.5833333333333334, 0.7222222222222222, 0.8, 0.6285714285714286]
@@ -108,13 +108,13 @@ for i,(index_train,index_test) in enumerate(fk.split(X)):
     # estimator=GaussianNB() -> Media = 0.9717 | Varianza = 0.000327
     
 # -------------------- IMPRESIÓN DE RESULTADOS --------------------
-N = len(vector_aciertos)
+N = len(vector_aciertos_AB)
 
-print('\n--- Perceptrón Multicapa (MLP) ---')
-media_mlp = np.sum(vector_aciertos)/N
-varianza_mlp = np.sum((vector_aciertos - media_mlp)**2)/N
-print(f"Ratios obtenidos = {vector_aciertos}")
-print(f"Media = {media_mlp:.4f} | Varianza = {varianza_mlp:.6f}")
+# print('\n--- Perceptrón Multicapa (MLP) ---')
+# media_mlp = np.sum(vector_aciertos)/N
+# varianza_mlp = np.sum((vector_aciertos - media_mlp)**2)/N
+# print(f"Ratios obtenidos = {vector_aciertos}")
+# print(f"Media = {media_mlp:.4f} | Varianza = {varianza_mlp:.6f}")
 
 print('\n--- Bagging (B) ---')
 media_nb = np.sum(vector_aciertos_B)/N
