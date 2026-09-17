@@ -45,3 +45,28 @@ def k_means(patrones, nro_grupos, epocas):
         K = centroides
 
     return K, lotes_patrones
+
+def calcular_compactitud(k,lotes_patrones,entradas):
+    cant_clusters = len(k[:,0])
+    cant_patrones = len(entradas[:,0])
+
+    compactidudes=np.zeros((cant_clusters))
+    cont_cant_patrones_x_cluster=np.zeros((cant_clusters))
+    for i in range(cant_patrones):
+        #distancia = sum((k - entradas[i,:])**2)
+        distancia= np.linalg.norm(k - entradas[i,:],2)
+
+        ind_cluster=int(lotes_patrones[i])
+        print(ind_cluster)
+        cont_cant_patrones_x_cluster[ind_cluster] += 1
+
+        compactidudes[ind_cluster] += distancia
+
+    for i in range(cant_clusters):
+        if (cont_cant_patrones_x_cluster[i] != 0):
+            compactidudes[i]= compactidudes[i]/cont_cant_patrones_x_cluster[i]
+        else:
+            compactidudes[i]=0
+
+    compactitud_global= sum(compactidudes)/len(compactidudes[:])
+    return compactidudes,compactitud_global

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def buscar_indice_activacion(matriz_neuronas,dim_matriz_neuronas,patron):
+def buscar_indice_activacion(matriz_neuronas,patron):
 
     distancias = np.sum((patron - matriz_neuronas)**2, axis=2)
     pos_act = np.unravel_index(np.argmin(distancias), distancias.shape)
@@ -76,7 +76,7 @@ def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado):
             print(f"epocas={n}")
             for k in range(cant_patrones):#recorremos los patrones
                 #buscamos la neurona que debe activarse
-                pos_act=buscar_indice_activacion(matriz_neuronas,dim_matriz_neuronas,patrones[k]) # funciona pero lo podria cambiar por una operacion vectorial ahora que solucione las dimensiones
+                pos_act=buscar_indice_activacion(matriz_neuronas,patrones[k]) # funciona pero lo podria cambiar por una operacion vectorial ahora que solucione las dimensiones
 
                 ############## actualizamos los pesos ###########################
                 if(vecindad!=0):
@@ -157,8 +157,49 @@ def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado):
     plt.show()
 
 
+def clasificar(matriz_neuronas,entradas,salidas):
+    filas = len(matriz_neuronas[:,0])
+    columnas = len(matriz_neuronas[0,:])
+    comp_etiqueta = len(salidas[0,:])
+
+    cant_patrones=len(entradas[:,0])
+
+    clasificacion = np.zeros((filas,columnas,comp_etiqueta))
+    for i in range(cant_patrones):
+        ind_act = buscar_indice_activacion(matriz_neuronas=matriz_neuronas,patron=entradas[i,:])
+        ind_salida=np.argmax(salidas[i,:])
+        clasificacion[ind_act[0],ind_act[1],ind_salida] += 1
+
+    print(clasificacion)
+
+    for i in range(filas):
+        for j in range(columnas):
+            ind_max= np.argmax(clasificacion[i,j,:])
+            clasificacion[i,j,:]=-1
+            clasificacion[i,j,ind_max]=1
+
+    print(clasificacion)
+
+    return clasificacion
                     
-                    
+def tst_SOM(matriz_neuronas,entradas,salidas):
+    cant_salidas=len(salidas[0,:])
+    cant_patrones=len(entradas[:,0])
+
+    clasificacion=clasificar(matriz_neuronas,entradas,salidas)
+
+    matriz_contingencia=np.zeros((cant_salidas,cant_salidas))
+
+    for i in range(cant_patrones):
+        ind_act=buscar_indice_activacion(matriz_neuronas,patron=entradas[i,:])
+
+        salida_correcta= np.argmax(salidas[i,:])
+        salida_predicha= np.argmax(clasificacion[ind_act[0],ind_act[1],:])
+
+        matriz_contingencia[salida_correcta,salida_predicha] += 1
+
+    print(f"matriz contingencia SOM \n {matriz_contingencia}")
+    return matriz_contingencia 
                     
 
                 
