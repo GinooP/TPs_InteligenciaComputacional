@@ -14,7 +14,7 @@ def k_means(patrones, nro_grupos, epocas):
     indices_random = rng.choice(N, size=nro_grupos, replace=False)
     K = patrones[indices_random,:]
     
-    lotes_patrones = np.zeros((N,1))
+    lotes_patrones = np.zeros((N))
     centroides = np.zeros((nro_grupos, M))
 
     for i in range(epocas):
@@ -111,10 +111,10 @@ def calcular_compactitud(k,lotes_patrones,entradas):
     cont_cant_patrones_x_cluster=np.zeros((cant_clusters))
     for i in range(cant_patrones):
         #distancia = sum((k - entradas[i,:])**2)
-        distancia= np.linalg.norm(k - entradas[i,:],2)
-
+        
         ind_cluster=int(lotes_patrones[i])
-        print(ind_cluster)
+        distancia= np.linalg.norm(k[ind_cluster,:] - entradas[i,:],2)
+
         cont_cant_patrones_x_cluster[ind_cluster] += 1
 
         compactidudes[ind_cluster] += distancia

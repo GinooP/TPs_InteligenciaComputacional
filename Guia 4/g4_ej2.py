@@ -110,4 +110,4 @@ plt.title('SOM en 2D: Frecuencia de Activación y Clases de Iris')
 plt.xlabel('Columnas de Neuronas')
 plt.ylabel('Filas de Neuronas')
 plt.grid(False) # Apagamos la grilla por defecto de Matplotlib para que no moleste
-plt.show()
+plt.show(block=True)

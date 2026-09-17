@@ -30,7 +30,7 @@ def buscar_indice_activacion(matriz_neuronas,patron):
 
     return pos_act
 
-def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado):
+def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado,graf):
     #cuadrado=indica si la vencidad tiene forma cuadrada o de rombo
     #vecindad = determina hasta cuantos vecinos tomamos (con forma de rombo o cuadrado dependiendo del bool
     #dim_matriz_neuronas: dimensiones de la matriz de neuronas (filas,columnas)
@@ -61,14 +61,14 @@ def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado):
     # plt.grid(visible=True)
     # plt.show()
 
-    #graficamos las neuronas con las pociciones al azar}
-    etapa=0
-    plt.ion()
-    plt.figure(0,figsize=(8,6))
-    plt.scatter(matriz_neuronas[:,:,0],matriz_neuronas[:,:,1],color='blue',label="Pesos de las neuronas")
-    plt.scatter(patrones[:,0],patrones[:,1],color='red',alpha=0.5,label="Patrones")
-    plt.title(f"Incializacion aleatoria de los pesos")
-    plt.legend()
+    # #graficamos las neuronas con las pociciones al azar}
+    # etapa=0
+    # plt.ion()
+    # plt.figure(0,figsize=(8,6))
+    # plt.scatter(matriz_neuronas[:,:,0],matriz_neuronas[:,:,1],color='blue',label="Pesos de las neuronas")
+    # plt.scatter(patrones[:,0],patrones[:,1],color='red',alpha=0.5,label="Patrones")
+    # plt.title(f"Incializacion aleatoria de los pesos")
+    # plt.legend()
     
     while(etapa<3):
         
@@ -147,15 +147,37 @@ def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado):
             eta=0.01
 
         #graficamos las neuronas (osea sus pesos)
-        plt.figure(etapa+1,figsize=(8,6))
-        plt.scatter(matriz_neuronas[:,:,0],matriz_neuronas[:,:,1],color='blue',label="Pesos de las neuronas")
-        plt.scatter(patrones[:,0],patrones[:,1],color='red',alpha=0.5,label="Patrones")
-        plt.title(f"Etapa ={etapa}")
-        plt.legend()
+        if graf:
+            plt.figure(etapa+1,figsize=(8,6))
+            plt.scatter(matriz_neuronas[:,:,0],matriz_neuronas[:,:,1],color='blue',label="Pesos de las neuronas")
+            plt.scatter(patrones[:,0],patrones[:,1],color='red',alpha=0.5,label="Patrones")
+            plt.title(f"Etapa ={etapa}")
+            plt.legend()
 
-    plt.ioff()
-    plt.show()
+            plt.scatter(patrones[:, 0], patrones[:, 1], c='red', label='Patrones', alpha=0.5)
 
+            # 2. Dibujamos las líneas de la malla del SOM
+            filas, columnas, _ = matriz_neuronas.shape
+
+            # Dibujar conexiones horizontales (a lo largo de cada fila)
+            for i in range(filas):
+                # Toma todas las columnas de la fila 'i', coordenada X (índice 0) y Y (índice 1)
+                plt.plot(matriz_neuronas[i, :, 0], matriz_neuronas[i, :, 1], color='blue', alpha=0.4)
+
+            # Dibujar conexiones verticales (a lo largo de cada columna)
+            for j in range(columnas):
+                # Toma todas las filas de la columna 'j', coordenada X (índice 0) y Y (índice 1)
+                plt.plot(matriz_neuronas[:, j, 0], matriz_neuronas[:, j, 1], color='blue', alpha=0.4)
+
+            # 3. Finalmente, graficamos los puntos azules (los pesos/neuronas) por encima de las líneas
+            # Aplanamos la matriz temporalmente a (81, 2) solo para el scatter
+            neuronas_planas = matriz_neuronas.reshape(-1, 2) 
+            plt.scatter(neuronas_planas[:, 0], neuronas_planas[:, 1], c='blue', label='Pesos de las neuronas', zorder=5)
+
+            plt.ioff()
+            plt.show()
+            
+    return matriz_neuronas
 
 def clasificar(matriz_neuronas,entradas,salidas):
     filas = len(matriz_neuronas[:,0])
