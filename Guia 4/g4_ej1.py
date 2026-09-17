@@ -6,6 +6,6 @@ dim_matriz_neuronas = (10,10)
 epocas=[250,500,250] #epocas=[50,50,50], #vecindad=3, eta=0.9 anda bien muy bien
 vecindad=3
 eta=0.9
-cuadrado=False
+cuadrado=False #dejar en false
 
-S.som(patrones, dim_matriz_neuronas, epocas, eta, vecindad,cuadrado)
+S.som(patrones, dim_matriz_neuronas, epocas, eta, vecindad,cuadrado,graf=True)

@@ -29,37 +29,43 @@ matriz_neuronas = s.som(patrones, dim_matriz_neuronas, epocas, eta, vecindad, cu
 # # Comparacion con etiquetas reales, de referencia, clases conocidas, etc. ´
 # # Comparacion entre diferentes soluciones de clustering. ´
 # # Matriz de contingencia:
-entradas = patrones_trn[:,0:4]
-salidas = patrones_trn[:,4:7]
+entradas_trn = patrones_trn[:,0:4]
+salidas_trn = patrones_trn[:,4:7]
 
-matriz_contingencia_SOM= s.tst_SOM(matriz_neuronas,entradas,salidas)
+entradas_tst = patrones_tst[:,0:4]
+salidas_tst = patrones_tst[:,4:7]
 
-# # print(entradas)
-# # print(salidas)
-# #print(f"cantidad de entradas: {entradas.shape}")
+clasificacion_SOM= s.clasificar(matriz_neuronas,entradas_trn,salidas_trn)
+matriz_contingencia_SOM= s.tst_SOM(matriz_neuronas,entradas_tst,salidas_tst,clasificacion=clasificacion_SOM)
+print(f"matriz de contingencia del SOM \n {matriz_contingencia_SOM}")
 
-# matriz_contingencia = km.tst_k_means(K, lotes_patrones, entradas, salidas)
-# print(matriz_contingencia)
+# # print(entradas_trn)
+# # print(salidas_trn)
+# #print(f"cantidad de entradas_trn: {entradas_trn.shape}")
 
-compactitudes,compactitud_global = km.calcular_compactitud(K,lotes_patrones,entradas)
+clasificacion_km= km.clasificar_K(K,lotes_patrones,salidas_trn)
+matriz_contingencia_km = km.tst_k_means(K, lotes_patrones, entradas_tst, salidas_tst,clasificacion=clasificacion_km)
+print(f"matriz_contingencia_km \n {matriz_contingencia_km}")
+
+compactitudes,compactitud_global = km.calcular_compactitud(K,lotes_patrones,entradas_trn)
 print(f"compactitudes: \n {compactitudes}")
 print(f"compactitud_global= {compactitud_global}")
 # #graficamos los puntos en una dimension
-# mascara_iris1= salidas[:,0] == 1
-# mascara_iris2= salidas[:,1] == 1
-# mascara_iris3= salidas[:,2] == 1
+# mascara_iris1= salidas_trn[:,0] == 1
+# mascara_iris2= salidas_trn[:,1] == 1
+# mascara_iris3= salidas_trn[:,2] == 1
 # #print(f"cantidad de patrones: {sum(mascara_iris1) + sum(mascara_iris2) + sum(mascara_iris3)}")
 # plt.figure(0)
-# plt.scatter(entradas[mascara_iris1,0],entradas[mascara_iris1,1],color='blue',label="iris1")
-# plt.scatter(entradas[mascara_iris2,0],entradas[mascara_iris2,1],color='orange',label="iris2")
-# plt.scatter(entradas[mascara_iris3,0],entradas[mascara_iris3,1],color='violet',label="iris3")
+# plt.scatter(entradas_trn[mascara_iris1,0],entradas_trn[mascara_iris1,1],color='blue',label="iris1")
+# plt.scatter(entradas_trn[mascara_iris2,0],entradas_trn[mascara_iris2,1],color='orange',label="iris2")
+# plt.scatter(entradas_trn[mascara_iris3,0],entradas_trn[mascara_iris3,1],color='violet',label="iris3")
 # plt.scatter(K[:,0],K[:,1],color="black",label="centroides")
 # plt.title("Distribucion de las iris y los centroides")
 # plt.legend()
 # plt.show()
 
 
-# --- AGREGAR AL FINAL DE TU SCRIPT ---
+#grafico de las neuronas del SOM con la escala de colores
 
 # 1. Inicializar matrices para frecuencias y clases
 filas_som, cols_som = dim_matriz_neuronas
@@ -67,9 +73,9 @@ mapa_frecuencias = np.zeros((filas_som, cols_som))
 mapa_votos_clases = np.zeros((filas_som, cols_som, 3)) # 3 clases de Iris
 
 # 2. Calcular las frecuencias y votos iterando sobre los datos de entrenamiento
-for i in range(len(entradas)):
-    patron = entradas[i]
-    clase_real = np.argmax(salidas[i,:]) # Devuelve 0, 1 o 2
+for i in range(len(entradas_tst)):
+    patron = entradas_tst[i]
+    clase_real = np.argmax(salidas_trn[i,:]) # Devuelve 0, 1 o 2
     
     # Encontramos la neurona ganadora para este patrón
     pos_act = s.buscar_indice_activacion(matriz_neuronas, patron)

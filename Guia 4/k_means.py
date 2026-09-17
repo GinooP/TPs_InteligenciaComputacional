@@ -67,7 +67,7 @@ def clasificar_K(K, lotes_patrones, salidas):
         # print(ind_c)
         clasificacion[ind_k, ind_c] += 1
 
-    print(f"resultado del conteo: \n {clasificacion}")
+    #print(f"resultado del conteo: \n {clasificacion}")
 
     for i in range(nro_lotes):
         ind_max = np.argmax(clasificacion[i,:])
@@ -76,12 +76,13 @@ def clasificar_K(K, lotes_patrones, salidas):
 
     return clasificacion
 
-def tst_k_means(K, lotes_patrones, entradas, salidas):
+def tst_k_means(K, lotes_patrones, entradas, salidas, clasificacion=None):
     nro_patrones = len(entradas[:,0])
     nro_salidas = len(salidas[0,:])
 
-    clasificacion = clasificar_K(K, lotes_patrones, salidas)
-    print(f"esta es la clasificacion \n {clasificacion}")
+    if(clasificacion is None):
+        clasificacion = clasificar_K(K, lotes_patrones, salidas)
+        #print(f"esta es la clasificacion \n {clasificacion}")
 
     matriz_contingencia = np.zeros((nro_salidas,nro_salidas))
     lotes_patrones = np.zeros((nro_patrones))

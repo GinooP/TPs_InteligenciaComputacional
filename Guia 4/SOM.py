@@ -30,7 +30,7 @@ def buscar_indice_activacion(matriz_neuronas,patron):
 
     return pos_act
 
-def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado,graf):
+def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado,graf,tol=1e-5):
     #cuadrado=indica si la vencidad tiene forma cuadrada o de rombo
     #vecindad = determina hasta cuantos vecinos tomamos (con forma de rombo o cuadrado dependiendo del bool
     #dim_matriz_neuronas: dimensiones de la matriz de neuronas (filas,columnas)
@@ -62,7 +62,6 @@ def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado,graf):
     # plt.show()
 
     # #graficamos las neuronas con las pociciones al azar}
-    # etapa=0
     # plt.ion()
     # plt.figure(0,figsize=(8,6))
     # plt.scatter(matriz_neuronas[:,:,0],matriz_neuronas[:,:,1],color='blue',label="Pesos de las neuronas")
@@ -70,10 +69,12 @@ def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado,graf):
     # plt.title(f"Incializacion aleatoria de los pesos")
     # plt.legend()
     
+    etapa=0
     while(etapa<3):
         
         for n in range(epocas[etapa]):
             print(f"epocas={n}")
+            matriz_neuronas_ini =  matriz_neuronas.copy() #matriz para comprobar si los desplazamientos son grandes
             for k in range(cant_patrones):#recorremos los patrones
                 #buscamos la neurona que debe activarse
                 pos_act=buscar_indice_activacion(matriz_neuronas,patrones[k]) # funciona pero lo podria cambiar por una operacion vectorial ahora que solucione las dimensiones
@@ -139,6 +140,12 @@ def som(patrones,dim_matriz_neuronas,epocas,eta,vecindad,cuadrado,graf):
             if(etapa==1):
                 vecindad = int(dec_lineal_vecindad(n)) #decrece con las epocas hasta 1
                 eta = dec_expo_eta(n) #decrece con las epocas hasta 0.1
+
+            #condicion de corte
+            if(etapa== 2):
+                desp_neuronas = abs(matriz_neuronas_ini - matriz_neuronas)
+                if (np.max(desp_neuronas) < tol):#si el desplzamiento maximo es menor a tol cortamos
+                    break
         
         etapa += 1#incrementamos la etapa
 
@@ -204,11 +211,12 @@ def clasificar(matriz_neuronas,entradas,salidas):
 
     return clasificacion
                     
-def tst_SOM(matriz_neuronas,entradas,salidas):
+def tst_SOM(matriz_neuronas,entradas,salidas,clasificacion=None):
     cant_salidas=len(salidas[0,:])
     cant_patrones=len(entradas[:,0])
 
-    clasificacion=clasificar(matriz_neuronas,entradas,salidas)
+    if(clasificacion is None):
+        clasificacion=clasificar(matriz_neuronas,entradas,salidas)
 
     matriz_contingencia=np.zeros((cant_salidas,cant_salidas))
 
@@ -220,7 +228,7 @@ def tst_SOM(matriz_neuronas,entradas,salidas):
 
         matriz_contingencia[salida_correcta,salida_predicha] += 1
 
-    print(f"matriz contingencia SOM \n {matriz_contingencia}")
+    #print(f"matriz contingencia SOM \n {matriz_contingencia}")
     return matriz_contingencia 
                     
 
