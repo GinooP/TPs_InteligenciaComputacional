@@ -52,7 +52,7 @@ def som(patrones, dim_matriz_neuronas, epocas, eta, vecindad, cuadrado, graf):
     while(etapa<3):
 
         cant_epocas = epocas[etapa]
-        print(f"Etapa = {etapa+1}. Ejecutando...")
+        # print(f"Etapa = {etapa+1}. Ejecutando...")
         for n in range(cant_epocas):
 
             # print(f"epocas={n}")
@@ -92,9 +92,9 @@ def som(patrones, dim_matriz_neuronas, epocas, eta, vecindad, cuadrado, graf):
                     if(cuadrado==True):
                         #con esto genero un cuadrado 
 
-                        delta_pesos=eta*(patrones[k] - matriz_neuronas[pos_act[0]-desp_arriba:pos_act[0]+desp_abajo, pos_act[1]-desp_izq:pos_act[1]+desp_der])
+                        delta_pesos=eta*(patrones[k] - matriz_neuronas[pos_act[0]-desp_arriba:pos_act[0]+desp_abajo+1, pos_act[1]-desp_izq:pos_act[1]+desp_der+1])
                         #print(f"\n {delta_pesos}\n")
-                        matriz_neuronas[pos_act[0]-desp_arriba:pos_act[0]+desp_abajo, pos_act[1]-desp_izq:pos_act[1]+desp_der] += delta_pesos
+                        matriz_neuronas[pos_act[0]-desp_arriba:pos_act[0]+desp_abajo+1, pos_act[1]-desp_izq:pos_act[1]+desp_der+1] += delta_pesos
                     else:
                         #con esto formamos un rombo
 
@@ -194,10 +194,8 @@ def clasificar_neuronas(matriz_neuronas, entradas, salidas):
 def tst_som(matriz_neuronas,entradas,salidas):
     cant_salidas=len(salidas[0,:])
     cant_patrones=len(entradas[:,0])
-    filas = len(matriz_neuronas[:,0])
-    columnas = len(matriz_neuronas[0,:])
 
-    clasificacion = clasificar_neuronas(matriz_neuronas, entradas,salidas)
+    clasificacion = clasificar_neuronas(matriz_neuronas, entradas, salidas)
 
     matriz_contingencia=np.zeros((cant_salidas,cant_salidas))
 
