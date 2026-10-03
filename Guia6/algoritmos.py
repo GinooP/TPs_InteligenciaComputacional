@@ -66,8 +66,8 @@ def algoritmo_genetico(individuos, funcion_decodificacion, funcion_aptitud, meca
         indice_mejor_apto = np.argmax(aptitudes)
         if graf:
             mejores_aptitudes.append(aptitudes[indice_mejor_apto])
-        print(f'Iteracion = {iteracion} | Fitness = {aptitudes[indice_mejor_apto]:.4f} | Cant. Individuos = {cant_individuos}')
-        # print(f'Iteracion = {iteracion} | Mejor Genotipo = {poblacion[indice_mejor_apto,:]} | Fitness = {aptitudes[indice_mejor_apto]} | Cant. Individuos = {cant_individuos}')
+        print(f'Fitness = {aptitudes[indice_mejor_apto]:.4f} | Cant. Individuos = {cant_individuos} | Iteracion = {iteracion}')
+        # print(f'Mejor Genotipo = {poblacion[indice_mejor_apto,:]} | Fitness = {aptitudes[indice_mejor_apto]} | Cant. Individuos = {cant_individuos} | Iteracion = {iteracion}')
 
         if (aptitudes[indice_mejor_apto] > aptitud_requerida): 
             break
@@ -88,6 +88,22 @@ def algoritmo_genetico(individuos, funcion_decodificacion, funcion_aptitud, meca
     return poblacion[indice_mejor_apto]
 
 def mecanismo_ventanas(aptitudes):
+    cant_individuos = len(aptitudes)
+    # Ordenar de mayor a menor (los mejores al principio)
+    indices_individuos = np.argsort(aptitudes)[::-1]
+    progenitores = []
+
+    # Generamos la misma cantidad de progenitores que la población actual
+    for _ in range(cant_individuos):
+        # Seleccionamos aleatoriamente, pero sesgado hacia los mejores 
+        # (ej. elegimos aleatoriamente entre la mitad superior de la población)
+        limite_ventana = max(2, cant_individuos // 2) 
+        ind_progenitor = np.random.randint(0, limite_ventana)
+        progenitores.append(indices_individuos[ind_progenitor])
+    
+    return progenitores
+
+def mecanismo_competencia(aptitudes):
     cant_individuos = len(aptitudes)
     # Ordenar de mayor a menor (los mejores al principio)
     indices_individuos = np.argsort(aptitudes)[::-1]

@@ -138,11 +138,15 @@ for i in range(30):
 
 print(' Metodo de Gradiente Descendiente con libreria SciPy \n')
 print(' FUNCION INCISO 1:')
-print(f"Mínimo promedio encontrado (GD): {np.mean(resultados_gd_f1):.4f}")
+print("Mínimos encontrados (GD) en cada corrida:")
+for i, val in enumerate(resultados_gd_f1):
+    print(f"Corrida {i+1}: {val:.4f}")
 print(f"Desvío estándar de los resultados: {np.std(resultados_gd_f1):.4f}")
 print(f"Tiempo promedio por ejecución: {np.mean(tiempos_gd_f1):.6f} seg\n")
 
 print(' FUNCION INCISO 2:')
-print(f"Mínimo promedio encontrado (GD): {np.mean(resultados_gd_f2):.4f}")
+print("Mínimos encontrados (GD) en cada corrida:")
+for i, val in enumerate(resultados_gd_f2):
+    print(f"Corrida {i+1}: {val:.4f}")
 print(f"Desvío estándar de los resultados: {np.std(resultados_gd_f2):.4f}")
 print(f"Tiempo promedio por ejecución: {np.mean(tiempos_gd_f2):.6f} seg")
