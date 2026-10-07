@@ -18,7 +18,7 @@ def mutacion(individuo,cant_bits,prob_mutacion): #alteramos un bit al azar del i
             individuo[bit_mutante]=1
         #print(f"individuo mutado= {individuo}")
 
-def algoritmo_evolutivo(cant_individuos,cant_bits,func_fitnes,cant_progenitores,aptitud_requerida,prob_mutacion,inicializar,elitismo=False):
+def algoritmo_evolutivo(cant_individuos,cant_bits,func_fitnes,cant_progenitores,aptitud_requerida,prob_mutacion,inicializar,max_it,elitismo=False):
 
     #1 Inicializacion (podria agregar algun parametro para ajustar la probabilidad de unos o ceros)
     poblacion=inicializar(cant_individuos,cant_bits) #inicializamos la poblacion con valores al azar entre cero y uno
@@ -45,7 +45,7 @@ def algoritmo_evolutivo(cant_individuos,cant_bits,func_fitnes,cant_progenitores,
         factor_elitismo=1
 
     num_generacion=0
-    while(fitnes[indices[0]] < aptitud_requerida and num_generacion<1000): #la mejor aptitud es el indice[0]
+    while(fitnes[indices[0]] < aptitud_requerida and num_generacion<max_it): #la mejor aptitud es el indice[0]
         num_generacion+=1
         print (f"generacion= {num_generacion}")
         #obtenemos los progenitores
@@ -112,10 +112,10 @@ def algoritmo_evolutivo(cant_individuos,cant_bits,func_fitnes,cant_progenitores,
         mejores_fitnes.append(fitnes[indices[0]])
         peores_fitnes.append(fitnes[indices[-1]])
         print("#########################################################################################")
-        print(fitnes[indices])
+        #print(fitnes[indices])
         print(f"mejor fitnes: {fitnes[indices[0]]}")
         print(f"peor fitnes= {fitnes[indices[-1]]}")
-        print(np.sum(poblacion[indices[0]]))
+        print(f"cantidad de caracteristicas: {np.sum(poblacion[indices[0]])}")
         
 
     #si ya alcanzamos la aptitud requerida retornamos la mejor solucion y los historicos de mejores y peores fitnes
