@@ -87,7 +87,8 @@ def algoritmo_enjambre_particulas(
             r2 = rng.random(cant_dimensiones)
 
             # 4.2.1. Actualizar la velocidad de la particula
-            V[k,:] += c1*r1*(Y[k,:] - X[k,:]) + c2*r2*(Yentorno[k,:] - X[k,:])
+            w = 0.7 # Inercia
+            V[k,:] = w*V[k,:] + c1*r1*(Y[k,:] - X[k,:]) + c2*r2*(Yentorno[k,:] - X[k,:])
 
             # 4.2.2. Actualizar la posicion de la particula
             X[k,:] += V[k,:]
@@ -95,7 +96,6 @@ def algoritmo_enjambre_particulas(
 
         X_aptitudes = funcion(X)
 
-        # print(f'Iteracion = {it} | Mejor de cada Entorno = \n{Yentorno}')
 
         # 4.3. Chequear el cumplimiento del criterio
         for k in range(cant_particulas):
@@ -111,10 +111,12 @@ def algoritmo_enjambre_particulas(
 
         salida = Yentorno[np.argmin(Yentorno_aptitudes),:]
 
+        print(f'Iteracion = {it} | Mejor Global = {salida}')
+
     tfin = tm.perf_counter()
     ttotal = tfin - tini
     print(f"\nEl algoritmo de Enjambre de Particulas demoró: {ttotal:.4f} segundos \n")
 
     # 4. Devolver la mejor particula encontrada
 
-    return salida
+    return salida, ttotal

@@ -66,7 +66,9 @@ def algoritmo_genetico(individuos, funcion_decodificacion, funcion_aptitud, meca
         indice_mejor_apto = np.argmax(aptitudes)
         if graf:
             mejores_aptitudes.append(aptitudes[indice_mejor_apto])
-        print(f'Fitness = {aptitudes[indice_mejor_apto]:.4f} | Cant. Individuos = {cant_individuos} | Iteracion = {iteracion}')
+            
+        print(f'Iteracion = {iteracion} | Mejor Fenotipo = {fenotipos[indice_mejor_apto,:]} | Fitness = {aptitudes[indice_mejor_apto]:.4f}')
+        # print(f'Fitness = {aptitudes[indice_mejor_apto]:.4f} | Cant. Individuos = {cant_individuos} | Iteracion = {iteracion}')
         # print(f'Mejor Genotipo = {poblacion[indice_mejor_apto,:]} | Fitness = {aptitudes[indice_mejor_apto]} | Cant. Individuos = {cant_individuos} | Iteracion = {iteracion}')
 
         if (aptitudes[indice_mejor_apto] > aptitud_requerida): 
