@@ -5,148 +5,157 @@ import time as tm
 
 # ------------------------- INCISO 1 -------------------------
 
-def decodificar(individuo):
+def decodificar(poblacion, genes):
     x_min = -512
     x_max = 512
-    x_entero = 0
-    b = len(individuo)
+    b = len(poblacion[0,:])
+    cant_individuos = len(poblacion[:,0])
+    x_entero = np.zeros(cant_individuos)
 
-    for i in range(0,b):
-        x_entero += individuo[i]*(2**i)
+    for j in range(cant_individuos):
+        for i in range(b):
+            x_entero[j] += poblacion[j,i]*(2**i)
 
-    x = x_min + x_entero*((x_max - x_min)/(2**b - 1))
-    return x
+    fenotipos = x_min + x_entero*((x_max - x_min)/(2**b - 1))
+    return fenotipos
+
+f1 = lambda x: -x*np.sin(np.sqrt(np.abs(x)))
 
 def f_aptitud(fenotipos):
-    valores = f1(fenotipos[:,0])
+    valores = f1(fenotipos)
     aptitudes = -valores
     return aptitudes
 
-individuos = [10, 50]
-itmax = 200
-f1 = lambda x: -x*np.sin(np.sqrt(np.abs(x)))
+
+cant_individuos = 50
+cant_bits_por_individuo = 10
+genes = [10]
 aptitud_requerida = 418
-cant_variables = 1
+itmax = 200
+cant_progenitores = 10
+tasa_de_mutacion = [0.3, 'individuo']
+tasa_de_brecha = 0.3
 graf = True
 
-inicio = tm.perf_counter()
-individuo = alg.algoritmo_genetico(individuos, decodificar, f_aptitud, alg.mecanismo_ventanas, alg.mutacion, alg.cruzas_simples, alg.elitismo, aptitud_requerida, itmax, cant_variables,graf)
-fin = tm.perf_counter()
+individuo = alg.algoritmo_genetico_best(
+    cant_individuos, cant_bits_por_individuo, genes, aptitud_requerida, itmax, 
+    tasa_de_mutacion=tasa_de_mutacion,
+    f_decodificacion=decodificar,
+    f_aptitud=f_aptitud,
+    graf=graf
+    )
 
-ttotal = fin - inicio
-
-fenotipo = decodificar(individuo)
-value = f1(fenotipo)
-print(f'\nTiempo de busqueda = {ttotal:.6f} seg')
-print(f'Individuo = {individuo} -> f(x={fenotipo:.4f}) = {value:.4f}\n')
+# fenotipo = decodificar(individuo)
+# value = f1(fenotipo)
+# print(f'Individuo = {individuo} -> f(x={fenotipo:.4f}) = {value:.4f}\n')
 
 
 # ------------------------- INCISO 2 -------------------------
 
-def decodificar2(individuo):
-    min_val = -100
-    max_val = 100
-    x_entero = 0
-    y_entero = 0
-    b = len(individuo) // 2
+# def decodificar2(individuo):
+#     min_val = -100
+#     max_val = 100
+#     x_entero = 0
+#     y_entero = 0
+#     b = len(individuo) // 2
 
-    for i in range(0,b):
-        x_entero += individuo[i]*(2**i)
+#     for i in range(0,b):
+#         x_entero += individuo[i]*(2**i)
         
-    for i in range(0,b):
-        y_entero += individuo[i+b]*(2**i)
+#     for i in range(0,b):
+#         y_entero += individuo[i+b]*(2**i)
 
-    x = min_val + x_entero*((max_val - min_val)/(2**b - 1))
-    y = min_val + y_entero*((max_val - min_val)/(2**b - 1))
+#     x = min_val + x_entero*((max_val - min_val)/(2**b - 1))
+#     y = min_val + y_entero*((max_val - min_val)/(2**b - 1))
 
-    return np.array([x,y])
+#     return np.array([x,y])
 
-def f_aptitud2(fenotipos):
+# def f_aptitud2(fenotipos):
 
-    valores = f2(fenotipos[:,0],fenotipos[:,1])
-    val_max = np.max(valores)
-    bias = 0.001
-    aptitudes = (val_max - valores)/(val_max + bias)
+#     valores = f2(fenotipos[:,0],fenotipos[:,1])
+#     val_max = np.max(valores)
+#     bias = 0.001
+#     aptitudes = (val_max - valores)/(val_max + bias)
 
-    return aptitudes
+#     return aptitudes
 
 
-individuos = [60, 200]
-itmax = 200
-f2 = lambda x,y: (x**2 + y**2)**(0.25)*(np.sin(50 * (x**2 + y**2)**(0.1))**2 + 1)
-aptitud_requerida = 0.99
-cant_variables = 2
-graf = True
+# individuos = [60, 200]
+# itmax = 200
+# f2 = lambda x,y: (x**2 + y**2)**(0.25)*(np.sin(50 * (x**2 + y**2)**(0.1))**2 + 1)
+# aptitud_requerida = 0.99
+# cant_variables = 2
+# graf = True
 
-inicio = tm.perf_counter()
-individuo = alg.algoritmo_genetico(individuos, decodificar2, f_aptitud2, alg.mecanismo_ventanas, alg.mutacion, alg.cruzas_simples, alg.elitismo, aptitud_requerida, itmax, cant_variables, graf)
-fin = tm.perf_counter()
+# inicio = tm.perf_counter()
+# individuo = alg.algoritmo_genetico(individuos, decodificar2, f_aptitud2, alg.mecanismo_ventanas, alg.mutacion, alg.cruzas_simples, alg.elitismo, aptitud_requerida, itmax, cant_variables, graf)
+# fin = tm.perf_counter()
 
-ttotal = fin - inicio
+# ttotal = fin - inicio
 
-fenotipo = decodificar2(individuo)
-value = f2(fenotipo[0], fenotipo[1])
-print(f'\nTiempo de busqueda = {ttotal:.6f} seg')
-print(f'Individuo = {individuo} -> f(x={fenotipo[0]:.4f},y={fenotipo[1]:.4f}) = {value:.4f} \n')
+# fenotipo = decodificar2(individuo)
+# value = f2(fenotipo[0], fenotipo[1])
+# print(f'\nTiempo de busqueda = {ttotal:.6f} seg')
+# print(f'Individuo = {individuo} -> f(x={fenotipo[0]:.4f},y={fenotipo[1]:.4f}) = {value:.4f} \n')
 
-# ------------------------- Metodo de Gradiente Descendiente -------------------------
+# # ------------------------- Metodo de Gradiente Descendiente -------------------------
 
-# SciPy asume que la entrada es un único arreglo (v). 
-# Para f1, v[0] es x.
-f1_scipy = lambda v: -v[0] * np.sin(np.sqrt(np.abs(v[0])))
+# # SciPy asume que la entrada es un único arreglo (v). 
+# # Para f1, v[0] es x.
+# f1_scipy = lambda v: -v[0] * np.sin(np.sqrt(np.abs(v[0])))
 
-# Para f2, v[0] es x y v[1] es y.
-f2_scipy = lambda v: (v[0]**2 + v[1]**2)**(0.25) * (np.sin(50 * (v[0]**2 + v[1]**2)**(0.1))**2 + 1)
+# # Para f2, v[0] es x y v[1] es y.
+# f2_scipy = lambda v: (v[0]**2 + v[1]**2)**(0.25) * (np.sin(50 * (v[0]**2 + v[1]**2)**(0.1))**2 + 1)
 
-# Definimos los límites según la consigna
-limites_f1 = [(-512, 512)]
-# Para f2 necesitamos dos límites, uno para x y otro para y
-limites_f2 = [(-100, 100), (-100, 100)] 
+# # Definimos los límites según la consigna
+# limites_f1 = [(-512, 512)]
+# # Para f2 necesitamos dos límites, uno para x y otro para y
+# limites_f2 = [(-100, 100), (-100, 100)] 
 
-# Variables para guardar estadísticas de múltiples pruebas
-resultados_gd_f1 = []
-tiempos_gd_f1 = []
-resultados_gd_f2 = []
-tiempos_gd_f2 = []
+# # Variables para guardar estadísticas de múltiples pruebas
+# resultados_gd_f1 = []
+# tiempos_gd_f1 = []
+# resultados_gd_f2 = []
+# tiempos_gd_f2 = []
 
-# Ejecutamos el gradiente descendiente 30 veces para ver su dependencia del inicio
-for i in range(30):
-    # 1. Elegir punto de partida aleatorio
-    x_inicial_f1 = np.random.uniform(-512, 512, 1)
-    # Para f2 necesitamos generar 2 valores aleatorios
-    x_inicial_f2 = np.random.uniform(-100, 100, 2) 
+# # Ejecutamos el gradiente descendiente 30 veces para ver su dependencia del inicio
+# for i in range(30):
+#     # 1. Elegir punto de partida aleatorio
+#     x_inicial_f1 = np.random.uniform(-512, 512, 1)
+#     # Para f2 necesitamos generar 2 valores aleatorios
+#     x_inicial_f2 = np.random.uniform(-100, 100, 2) 
 
-    # method='L-BFGS-B':
-    #   una variante de gradiente que permite establecer límites espaciales 
-    #   que aproxima el gradiente numéricamente de forma automática
+#     # method='L-BFGS-B':
+#     #   una variante de gradiente que permite establecer límites espaciales 
+#     #   que aproxima el gradiente numéricamente de forma automática
 
-    # 2. Ejecutar la minimización para f1
-    inicio = tm.perf_counter()
-    res_f1 = minimize(f1_scipy, x_inicial_f1, method='L-BFGS-B', bounds=limites_f1)
-    fin = tm.perf_counter()
+#     # 2. Ejecutar la minimización para f1
+#     inicio = tm.perf_counter()
+#     res_f1 = minimize(f1_scipy, x_inicial_f1, method='L-BFGS-B', bounds=limites_f1)
+#     fin = tm.perf_counter()
     
-    resultados_gd_f1.append(res_f1.fun)
-    tiempos_gd_f1.append(fin - inicio)
+#     resultados_gd_f1.append(res_f1.fun)
+#     tiempos_gd_f1.append(fin - inicio)
 
-    # 3. Ejecutar la minimización para f2
-    inicio = tm.perf_counter()
-    res_f2 = minimize(f2_scipy, x_inicial_f2, method='L-BFGS-B', bounds=limites_f2)
-    fin = tm.perf_counter()
+#     # 3. Ejecutar la minimización para f2
+#     inicio = tm.perf_counter()
+#     res_f2 = minimize(f2_scipy, x_inicial_f2, method='L-BFGS-B', bounds=limites_f2)
+#     fin = tm.perf_counter()
 
-    resultados_gd_f2.append(res_f2.fun)
-    tiempos_gd_f2.append(fin - inicio)
+#     resultados_gd_f2.append(res_f2.fun)
+#     tiempos_gd_f2.append(fin - inicio)
 
-print(' Metodo de Gradiente Descendiente con libreria SciPy \n')
-print(' FUNCION INCISO 1:')
-print("Mínimos encontrados (GD) en cada corrida:")
-for i, val in enumerate(resultados_gd_f1):
-    print(f"Corrida {i+1}: {val:.4f}")
-print(f"Desvío estándar de los resultados: {np.std(resultados_gd_f1):.4f}")
-print(f"Tiempo promedio por ejecución: {np.mean(tiempos_gd_f1):.6f} seg\n")
+# print(' Metodo de Gradiente Descendiente con libreria SciPy \n')
+# print(' FUNCION INCISO 1:')
+# print("Mínimos encontrados (GD) en cada corrida:")
+# for i, val in enumerate(resultados_gd_f1):
+#     print(f"Corrida {i+1}: {val:.4f}")
+# print(f"Desvío estándar de los resultados: {np.std(resultados_gd_f1):.4f}")
+# print(f"Tiempo promedio por ejecución: {np.mean(tiempos_gd_f1):.6f} seg\n")
 
-print(' FUNCION INCISO 2:')
-print("Mínimos encontrados (GD) en cada corrida:")
-for i, val in enumerate(resultados_gd_f2):
-    print(f"Corrida {i+1}: {val:.4f}")
-print(f"Desvío estándar de los resultados: {np.std(resultados_gd_f2):.4f}")
-print(f"Tiempo promedio por ejecución: {np.mean(tiempos_gd_f2):.6f} seg")
+# print(' FUNCION INCISO 2:')
+# print("Mínimos encontrados (GD) en cada corrida:")
+# for i, val in enumerate(resultados_gd_f2):
+#     print(f"Corrida {i+1}: {val:.4f}")
+# print(f"Desvío estándar de los resultados: {np.std(resultados_gd_f2):.4f}")
+# print(f"Tiempo promedio por ejecución: {np.mean(tiempos_gd_f2):.6f} seg")
