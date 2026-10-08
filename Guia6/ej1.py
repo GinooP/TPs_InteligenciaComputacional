@@ -8,7 +8,7 @@ import time as tm
 def decodificar(poblacion, genes):
     x_min = -512
     x_max = 512
-    b = len(poblacion[0,:])
+    b = poblacion.shape[1]
     cant_individuos = len(poblacion[:,0])
     x_entero = np.zeros(cant_individuos)
 
@@ -28,7 +28,6 @@ def f_aptitud(fenotipos):
 
 
 cant_individuos = 50
-cant_bits_por_individuo = 10
 genes = [10]
 aptitud_requerida = 418
 itmax = 200
@@ -37,66 +36,73 @@ tasa_de_mutacion = [0.3, 'individuo']
 tasa_de_brecha = 0.3
 graf = True
 
-individuo = alg.algoritmo_genetico_best(
-    cant_individuos, cant_bits_por_individuo, genes, aptitud_requerida, itmax, 
+individuo = alg.algoritmo_genetico(
+    cant_individuos, genes, aptitud_requerida, itmax, 
     tasa_de_mutacion=tasa_de_mutacion,
     f_decodificacion=decodificar,
     f_aptitud=f_aptitud,
     graf=graf
     )
 
-# fenotipo = decodificar(individuo)
-# value = f1(fenotipo)
-# print(f'Individuo = {individuo} -> f(x={fenotipo:.4f}) = {value:.4f}\n')
+fenotipos = decodificar(np.array([individuo]),genes)
+value = f1(fenotipos)
+print(f'Individuo = {individuo} -> f(x={fenotipos[0]:.4f}) = {value[0]:.4f}\n')
 
 
 # ------------------------- INCISO 2 -------------------------
 
-# def decodificar2(individuo):
-#     min_val = -100
-#     max_val = 100
-#     x_entero = 0
-#     y_entero = 0
-#     b = len(individuo) // 2
+def decodificar2(poblacion, genes):
+    min_val = -100
+    max_val = 100
+    cant_genes = len(genes)
+    cant_individuos = poblacion.shape[0]
 
-#     for i in range(0,b):
-#         x_entero += individuo[i]*(2**i)
-        
-#     for i in range(0,b):
-#         y_entero += individuo[i+b]*(2**i)
+    fenotipos = np.zeros((cant_individuos,cant_genes))
+    b_prev = 0
+    for j in range(cant_genes):
 
-#     x = min_val + x_entero*((max_val - min_val)/(2**b - 1))
-#     y = min_val + y_entero*((max_val - min_val)/(2**b - 1))
+        x_entero = 0
+        b = genes[j]
+        for i in range(0,b):
+            x_entero += poblacion[:,i+b_prev]*(2**i)
 
-#     return np.array([x,y])
+        fenotipos[:,j] = min_val + x_entero*((max_val - min_val)/(2**genes[j] - 1))
+        b_prev += genes[j]
 
-# def f_aptitud2(fenotipos):
+    return fenotipos
 
-#     valores = f2(fenotipos[:,0],fenotipos[:,1])
-#     val_max = np.max(valores)
-#     bias = 0.001
-#     aptitudes = (val_max - valores)/(val_max + bias)
+f2 = lambda x,y: (x**2 + y**2)**(0.25)*(np.sin(50 * (x**2 + y**2)**(0.1))**2 + 1)
 
-#     return aptitudes
+def f_aptitud2(fenotipos):
+
+    valores = f2(fenotipos[:,0],fenotipos[:,1])
+    val_max = np.max(valores)
+    bias = 0.001
+    aptitudes = (val_max - valores)/(val_max + bias)
+
+    return aptitudes
 
 
-# individuos = [60, 200]
-# itmax = 200
-# f2 = lambda x,y: (x**2 + y**2)**(0.25)*(np.sin(50 * (x**2 + y**2)**(0.1))**2 + 1)
-# aptitud_requerida = 0.99
-# cant_variables = 2
-# graf = True
+cant_individuos = 60
+genes = [10, 10]
+aptitud_requerida = 0.999
+itmax = 2000
+cant_progenitores = 10
+tasa_de_mutacion = [0.3, 'individuo']
+tasa_de_brecha = 0.3
+graf = True
 
-# inicio = tm.perf_counter()
-# individuo = alg.algoritmo_genetico(individuos, decodificar2, f_aptitud2, alg.mecanismo_ventanas, alg.mutacion, alg.cruzas_simples, alg.elitismo, aptitud_requerida, itmax, cant_variables, graf)
-# fin = tm.perf_counter()
+individuo = alg.algoritmo_genetico(
+    cant_individuos, genes, aptitud_requerida, itmax, 
+    tasa_de_mutacion=tasa_de_mutacion,
+    f_decodificacion=decodificar2,
+    f_aptitud=f_aptitud2,
+    graf=graf
+    )
 
-# ttotal = fin - inicio
-
-# fenotipo = decodificar2(individuo)
-# value = f2(fenotipo[0], fenotipo[1])
-# print(f'\nTiempo de busqueda = {ttotal:.6f} seg')
-# print(f'Individuo = {individuo} -> f(x={fenotipo[0]:.4f},y={fenotipo[1]:.4f}) = {value:.4f} \n')
+fenotipos = decodificar2(np.array([individuo]), genes)
+value = f2(fenotipos[0,0], fenotipos[0,1])
+print(f'Individuo = {individuo} -> f(x={fenotipos[0,0]:.4f},y={fenotipos[0,1]:.4f}) = {value:.4f} \n')
 
 # # ------------------------- Metodo de Gradiente Descendiente -------------------------
 

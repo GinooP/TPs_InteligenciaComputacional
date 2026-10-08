@@ -48,7 +48,7 @@ def competencia(aptitudes, k, cant_progenitores=None, tasa_de_brecha=None):
 
     return np.array(indices_de_progenitores)
 
-def ruleta(aptitudes, cant_progenitores, tasa_de_brecha):
+def ruleta(aptitudes, k=None, cant_progenitores=None, tasa_de_brecha=None):
     rng = np.random.default_rng()
     cant_individuos = len(aptitudes)
 
@@ -70,7 +70,7 @@ def mutacion(poblacion, genes, tasa_de_mutacion):
     nivel = tasa_de_mutacion[1]  # 'individuo' o 'gen'
 
     cant_individuos = poblacion.shape[0]
-    cant_bits = sum(genes)
+    cant_bits = np.sum(genes)
     
     if nivel == 'individuo':
         # Modificaremos los individuos con una probabilidad de tm
@@ -100,43 +100,38 @@ def mutacion(poblacion, genes, tasa_de_mutacion):
 
     return pob_mutada
 
-def cruzas_simples(progenitores, cant_individuos=None, tasa_de_brecha=None):
+def cruzas_simples(progenitores, cant_individuos, tasa_de_brecha=None):
     rng = np.random.default_rng()
-    hijos = []
-    cant_progenitores = len(progenitores)
-    if cant_individuos == None:
-        cant_hijos = cant_progenitores
-    else:    
+    cant_progenitores = progenitores.shape[0]
+    cant_bits = progenitores.shape[1]
+
+    cant_hijos = cant_individuos
+    if tasa_de_brecha is not None:  # Reemplazo con Brecha Generacional
         cant_hijos = cant_individuos - cant_progenitores
-    
-    for i in range(0, cant_hijos, 2):
-        hijo1 = progenitores[i,:].copy()
-        hijo2 = progenitores[i+1,:].copy()
 
-        # Elegir un punto de cruza aleatorio para ESTE par de padres
-        # Entre 1 y la cantidad de bits - 1
-        cruza = rng.integers(1, progenitores.shape[1])
+    hijos = np.zeros((cant_hijos, cant_bits), dtype=progenitores.dtype)
+    for i in range(cant_hijos):
 
-        hijo1[0:cruza] = progenitores[i+1, 0:cruza]
-        hijo2[0:cruza] = progenitores[i, 0:cruza]
+        p1, p2 = rng.choice(cant_progenitores, size=2, replace=False)
 
-        hijos.append(hijo1)
-        hijos.append(hijo2)
+        cruza = rng.integers(1, cant_bits)
 
-    return np.array(hijos)
+        hijos[i, :cruza] = progenitores[p1, :cruza]
+        hijos[i, cruza:] = progenitores[p2, cruza:]
 
-def total(progenitores_variados, hijos, individuo_mejor_fitness_anterior, tasa_de_brecha):
-    ...
+    return hijos
 
-def brecha_generacional(progenitores_variados, hijos, individuo_mejor_fitness_anterior, tasa_de_brecha):
-    ...
-
-def elitismo(hijos, individuo_mejor_fitness_anterior,progenitores_variados=None, tasa_de_brecha=None):
-    
+def total(progenitores_variados, hijos, individuo_mejor_fitness_anterior):
     nueva_poblacion = hijos.copy()
-    # Reemplazamos el último hijo (o cualquier otro) por el élite
+    return nueva_poblacion
+
+def brecha_generacional(progenitores_variados, hijos, individuo_mejor_fitness_anterior):
+    nueva_poblacion = np.vstack((progenitores_variados, hijos))
+    return nueva_poblacion
+
+def elitismo(progenitores_variados, hijos, individuo_mejor_fitness_anterior):
+    nueva_poblacion = hijos.copy()
     nueva_poblacion[-1] = individuo_mejor_fitness_anterior
-    
     return nueva_poblacion
 
 
@@ -148,14 +143,14 @@ def algoritmo_genetico(
         cant_progenitores=None,         # cantidad de padres que van a ser seleccionados en la función de seleccion
         tasa_de_mutacion=None,          # [tm, n]: vector que contiene la probabilidad (tm) de que los individuos muten en la función de variación, definida a nivel de Individuos (n='individuo') o de Genes (n='gen').
         tasa_de_brecha=None,            # es la tasa usada para reemplazo con brecha generacional, que nos dice el porcentaje de progenitores que vamos a tener en la nueva poblacion.
-        k=None,
+        k=2,
         *,
         f_decodificacion,               # funcion para pasar de genotipo a fenotipo
         f_aptitud,                      # funcion para evaluar el fitness del fenotipo de un individuo. Ej: promedio de error, estadisticas, correlaciones, distancias, etc.
-        f_seleccion=ventanas,           # funcion para seleccionar los progenitores de la nueva población. Ej: Ruleta, Ventanas o Competencias
+        f_seleccion=competencia,        # funcion para seleccionar los progenitores de la nueva población. Ej: Ruleta, Ventanas o Competencias
         f_variacion=mutacion,           # funcion para variar los genes de los cromosomas que reciba. Ej: Mutacion
         f_reproduccion=cruzas_simples,  # funcion para reproducir los progenitores seleccionados. Ej: Cruzas Simples
-        f_reemplazo=elitismo,           # funcion para formar la nueva poblacion en base a los progenitores y los hijos formados. Ej: Total, con Brecha generacional o Elitismo
+        f_reemplazo=brecha_generacional,# funcion para formar la nueva poblacion en base a los progenitores y los hijos formados. Ej: Total, con Brecha generacional o Elitismo
         graf=False                      # booleano para graficar las mejores aptitudes en función de las iteraciones
     ):
 
@@ -165,7 +160,7 @@ def algoritmo_genetico(
 
     # 1. Inicializar la poblacion de forma aleatoria
     rng = np.random.default_rng()
-    cant_bits_por_individuo = sum(genes)
+    cant_bits_por_individuo = np.sum(genes)
     poblacion = rng.integers(0, 2, size=(cant_individuos, cant_bits_por_individuo))
 
     # 2. Evaluar el fitness de la poblacion
@@ -182,16 +177,16 @@ def algoritmo_genetico(
     for it in range(maximo_de_iteraciones):
 
         # 4.1. Obtener los progenitores
-        indices_progenitores = f_seleccion(aptitudes, cant_progenitores, tasa_de_brecha)
+        indices_progenitores = f_seleccion(aptitudes, k, cant_progenitores, tasa_de_brecha)
 
         # 4.2. Mutar los progenitores
         progenitores_variados = f_variacion(poblacion[indices_progenitores], genes, tasa_de_mutacion)
 
         # 4.3. Reproducir los progenitores
-        hijos = f_reproduccion(progenitores_variados, tasa_de_brecha)
+        hijos = f_reproduccion(progenitores_variados, cant_individuos, tasa_de_brecha)
 
         # 4.4. Reemplazar la población actual por la nueva generación
-        poblacion = f_reemplazo(progenitores_variados, hijos, poblacion[indice_individuo_mejor_fitness], tasa_de_brecha)
+        poblacion = f_reemplazo(progenitores_variados, hijos, poblacion[indice_individuo_mejor_fitness])
 
         # 4.5. Obtener el fitness de la población
         fenotipos = f_decodificacion(poblacion, genes)
