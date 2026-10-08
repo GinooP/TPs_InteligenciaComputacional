@@ -43,6 +43,7 @@ def algoritmo_enjambre_particulas(
 
             if aptitud_particula < aptitud_mejor_posicion_entorno:
                 Yentorno[k,:] = Y[indice,:]
+                aptitud_mejor_posicion_entorno = Y_aptitudes[indice]
 
     X_aptitudes = funcion(X)
     Y_aptitudes = funcion(Y)
@@ -120,3 +121,6 @@ def algoritmo_enjambre_particulas(
     # 4. Devolver la mejor particula encontrada
 
     return salida, ttotal
+
+
+

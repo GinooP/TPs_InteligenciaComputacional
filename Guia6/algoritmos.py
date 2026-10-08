@@ -105,22 +105,6 @@ def mecanismo_ventanas(aptitudes):
     
     return progenitores
 
-def mecanismo_competencia(aptitudes):
-    cant_individuos = len(aptitudes)
-    # Ordenar de mayor a menor (los mejores al principio)
-    indices_individuos = np.argsort(aptitudes)[::-1]
-    progenitores = []
-
-    # Generamos la misma cantidad de progenitores que la población actual
-    for _ in range(cant_individuos):
-        # Seleccionamos aleatoriamente, pero sesgado hacia los mejores 
-        # (ej. elegimos aleatoriamente entre la mitad superior de la población)
-        limite_ventana = max(2, cant_individuos // 2) 
-        ind_progenitor = np.random.randint(0, limite_ventana)
-        progenitores.append(indices_individuos[ind_progenitor])
-    
-    return progenitores
-
 def mutacion(poblacion):
     rng = np.random.default_rng()
     

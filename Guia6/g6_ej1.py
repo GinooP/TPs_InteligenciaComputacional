@@ -74,7 +74,7 @@ def f_aptitud2(fenotipos):
 individuos = [60, 200]
 itmax = 200
 f2 = lambda x,y: (x**2 + y**2)**(0.25)*(np.sin(50 * (x**2 + y**2)**(0.1))**2 + 1)
-aptitud_requerida = 0.99
+aptitud_requerida = 0.999
 cant_variables = 2
 graf = True
 
