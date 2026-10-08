@@ -37,17 +37,17 @@ it_max2=1000
 entorno2= 2
 
 condiciones_iniciales_2=np.array([[-100,100],[-100,100]])
-tol2= 0
-aceleracion_2=[1,0.25]
+tol2= 1e-3
+aceleracion_2=[1,1]
 
-mejor_particula = enj.enjambre_particulas(cant_particulas=cant_particulas1,f=f1,entorno=entorno1,condiciones_iniciales=condiciones_iniciales_1,
-                                          it_max=it_max1,tol=tol1,aceleracion=aceleracion_1)
+# mejor_particula = enj.enjambre_particulas(cant_particulas=cant_particulas1,f=f1,entorno=entorno1,condiciones_iniciales=condiciones_iniciales_1,
+#                                           it_max=it_max1,tol=tol1,aceleracion=aceleracion_1)
 
-print(f"esta es la mejor particula:{mejor_particula} || valor obtenido: {f1(mejor_particula)}")
+# #print(f"esta es la mejor particula:{mejor_particula} || valor obtenido: {f1(mejor_particula)}")
 
-# mejor_particula = enj.enjambre_particulas(cant_particulas=cant_particulas2,f=f2,entorno=entorno2,condiciones_iniciales=condiciones_iniciales_2,
-#                                           it_max=it_max2,tol=tol2,aceleracion=aceleracion_2)
+mejor_particula = enj.enjambre_particulas(cant_particulas=cant_particulas2,f=f2,entorno=entorno2,condiciones_iniciales=condiciones_iniciales_2,
+                                          it_max=it_max2,tol=tol2,aceleracion=aceleracion_2)
 
-# print(f"esta es la mejor particula:{mejor_particula}")
+print(f"esta es la mejor particula:{mejor_particula}")
 
-# print(f"valor obtenido: {f2(mejor_particula)}")
+print(f"valor obtenido: {f2(mejor_particula)}")

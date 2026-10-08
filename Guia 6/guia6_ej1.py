@@ -33,11 +33,12 @@ cant_bits=10
 cant_progenitores=5
 prob_mutacion=0.1#probabilidad de mutacion
 elitismo=True
+it_max=1000
 
 aptitud_requerida=415 #obtenido por inspeccion visual en geogebra (podria estimarlo con biseccion en octave)
 
-solucion,mejores_fitnes,peores_fitnes = evo.algoritmo_evolutivo(cant_individuos,cant_bits,func_aptitud,
-                                                                cant_progenitores,aptitud_requerida,prob_mutacion,elitismo)
+solucion,mejores_fitnes,peores_fitnes = evo.algoritmo_evolutivo(cant_individuos=cant_individuos,cant_bits=cant_bits,func_aptitud=func_aptitud,
+                                                                cant_progenitores=cant_progenitores,aptitud_requerida=aptitud_requerida,prob_mutacion=prob_mutacion,elitismo=elitismo,it_max=1000)
 
 print(solucion)
 print(mejores_fitnes[-1])

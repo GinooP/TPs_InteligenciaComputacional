@@ -52,7 +52,7 @@ def inicializar(cant_individuos,cant_bits):
 cant_individuos=16
 cant_bits=7129
 cant_progenitores=5
-prob_mutacion=0.2#probabilidad de mutacion
+prob_mutacion=0.5#probabilidad de mutacion
 elitismo=True
 max_it=100
 

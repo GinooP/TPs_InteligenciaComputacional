@@ -89,27 +89,30 @@ G=grafo(V=list(range(len(E))),E=E)
 #Aumentando alfa, se alcanza más seguido el criterio de parada porque más hormigas siguen las feromonas.
 #A su vez, esto hace más probable que se quede atrapado en un camino óptimo local.
 for i in range(1, 5):
-    print(f"\n######ITERACIÓN {i}#######")
+    print(f"\n####################### ITERACIÓN {i} #########################################")
     ini=time.perf_counter()
     CH_global=coloniaHormigas(G,num_hormigas=20,tmax=400,alpha=1+i*0.3,beta=2.5,rho=0.1,Q=10,metodo_actualizacion="global")
     fin=time.perf_counter()
     tiempo_total = fin - ini
-    print(f"###GLOBAL: El algoritmo demoró: {tiempo_total:.4f} segundos")
-    print("Mejor camino:", CH_global[0])
+    print("#############GLOBAL:")
+    print(f"El algoritmo demoró: {tiempo_total:.4f} segundos")
+    #print("Mejor camino:", CH_global[0])
     print("Mejor costo:", CH_global[1])
 
     ini=time.perf_counter()
     CH_local=coloniaHormigas(G,num_hormigas=20,tmax=400,alpha=1+i*0.3,beta=2.5,rho=0.1,Q=10,metodo_actualizacion="local")
     fin=time.perf_counter()
     tiempo_total = fin - ini
-    print(f"###LOCAL: El algoritmo demoró: {tiempo_total:.4f} segundos")
-    print("Mejor camino:", CH_local[0])
+    print(f"############LOCAL:")
+    print(f"El algoritmo demoró: {tiempo_total:.4f} segundos")
+    #print("Mejor camino:", CH_local[0])
     print("Mejor costo:", CH_local[1])
 
     ini=time.perf_counter()
     CH_uniforme=coloniaHormigas(G,num_hormigas=20,tmax=400,alpha=1+i*0.3,beta=2.5,rho=0.1,Q=10,metodo_actualizacion="uniforme")
     fin=time.perf_counter()
     tiempo_total = fin - ini
-    print(f"###UNIFORME: El algoritmo demoró: {tiempo_total:.4f} segundos")
-    print("Mejor camino:", CH_uniforme[0])
+    print(f"#############UNIFORME:")
+    print(f"El algoritmo demoró: {tiempo_total:.4f} segundos")
+    #print("Mejor camino:", CH_uniforme[0])
     print("Mejor costo:", CH_uniforme[1])

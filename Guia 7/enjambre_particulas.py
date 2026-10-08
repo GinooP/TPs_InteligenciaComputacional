@@ -72,7 +72,7 @@ def enjambre_particulas(cant_particulas,f,entorno,condiciones_iniciales,it_max,t
             #print(r)
             delta_velocidad = aceleracion[0]*r[0,:]*(mejores_pociciones_locales[i,:] - enjambre[i,:]) + aceleracion[1]*r[1,:]*(enjambre[mejores_indices_entorno[i],:] - enjambre[i,:])
             #print(f"velocidad de la particula {i}: {delta_velocidad}")
-            velocidades[i] = delta_velocidad
+            velocidades[i] = (0.5*velocidades[i])+delta_velocidad
             #print(velocidades[i])
 
             enjambre[i,:] = enjambre[i,:] + velocidades[i,:]
