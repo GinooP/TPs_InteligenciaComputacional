@@ -20,6 +20,22 @@ Y_indviduales = tabla_combates_individuales[:,-1]
 
 X_indv_train, X_indv_test, Y_indv_train, Y_indv_test = train_test_split(X_indviduales, Y_indviduales, test_size=0.25, random_state=42)
 
+#invertimos y concatenamos los datos del train
+# [0:24] primer pokemon, [24:48] segundo pokemon
+X_indv_train_invertido= np.zeros(X_indv_train.shape)
+
+X_indv_train_invertido[:,0:24] = X_indv_train[:,24:48]
+X_indv_train_invertido[:,24:48] = X_indv_train[:,0:24]
+
+X_indv_train= np.concatenate((X_indv_train,X_indv_train_invertido),axis=0)#concatena en por filas
+
+
+Y_indv_train_invertido= 1 - Y_indv_train # si Y=0 queda 1 y si Y=1 queda 0
+Y_indv_train = np.concatenate((Y_indv_train,Y_indv_train_invertido),axis=0)
+
+print(X_indv_train.shape)
+
+
 
 fk = KFold(n_splits=3)
 
@@ -27,6 +43,7 @@ fk = KFold(n_splits=3)
 eta = 0.05
 epocas = 1000
 tol = 0.95
+capas=(64,32)
 
 
 vector_aciertos_MLP = []
@@ -38,8 +55,8 @@ for i,(index_train,index_test) in enumerate(fk.split(X_indv_train)):
 
     # --- 1. Perceptrón Multicapa (MLP) ---
     tini = tm.perf_counter()
-    modelo = MLPClassifier(hidden_layer_sizes=(64,32),activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
-                        random_state=42, tol=tol, verbose=False) #para que no muestre en consola todo el proceso
+    modelo = MLPClassifier(hidden_layer_sizes=capas,activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
+                            tol=tol, verbose=False) #para que no muestre en consola todo el proceso
     
     modelo.fit(X_indv_train[index_train],Y_indv_train[index_train])
     vector_aciertos_MLP.append(modelo.score(X_indv_train[index_test],Y_indv_train[index_test]))

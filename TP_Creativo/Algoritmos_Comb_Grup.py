@@ -20,11 +20,25 @@ Y_grupales = tabla_combates_grupales[:,-1]
 
 X_grup_train, X_grup_test, Y_grup_train, Y_grup_test = train_test_split(X_grupales, Y_grupales, test_size=0.25, random_state=42)
 
+##### duplicamos los datos del train e invertimos los equipos de la segunda mitad por si hay sesgo
+# 0:144 es el primer el equipo (el rango llega hasta 143) y 144:288 es el segundo equipo
+X_grup_train_invertido= np.zeros(X_grup_train.shape)
+
+X_grup_train_invertido[:,0:144] = X_grup_train[:,144:288]
+X_grup_train_invertido[:,144:288] = X_grup_train[:,0:144]
+
+X_grup_train= np.concatenate((X_grup_train,X_grup_train_invertido),axis=0)#concatena en por filas
+
+Y_grup_train_invertido= 1 - Y_grup_train # si Y=0 queda 1 y si Y=1 queda 0
+
+Y_grup_train = np.concatenate((Y_grup_train,Y_grup_train_invertido),axis=0)
+
+
 fk = KFold(n_splits=3)
 
 # Constantes MLP
 eta = 0.01
-epocas = 100
+epocas = 500
 tol = 0.95
 capas = (64,32)
 
@@ -39,7 +53,7 @@ for i,(index_train,index_test) in enumerate(fk.split(X_grup_train)):
     # --- 1. Perceptrón Multicapa (MLP) ---
     tini = tm.perf_counter()
     modelo = MLPClassifier(hidden_layer_sizes=capas,activation='logistic',solver='sgd',learning_rate_init=eta,max_iter=epocas,
-                        random_state=42, tol=tol, verbose=False,n_iter_no_change=epocas+1,learning_rate='adaptive') #para que no muestre en consola todo el proceso
+                            tol=tol, verbose=False,n_iter_no_change=100,learning_rate='adaptive') #para que no muestre en consola todo el proceso
     
     modelo.fit(X_grup_train[index_train],Y_grup_train[index_train])
     vector_aciertos_MLP.append(modelo.score(X_grup_train[index_test],Y_grup_train[index_test]))
