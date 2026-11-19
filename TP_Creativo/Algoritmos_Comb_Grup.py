@@ -40,22 +40,21 @@ Y_grup_train = np.concatenate((Y_grup_train,Y_grup_train_invertido),axis=0)
 X_grup_train, Y_grup_train = shuffle(X_grup_train, Y_grup_train, random_state=42) #desordenamos los datos
 
 
-fk = KFold(n_splits=3)
+# fk = KFold(n_splits=3)
 
 ################################## Busqueda usando gridsearch ###########################################################################
-# fk = KFold(n_splits=3)
 
 # parametros = [
 #     {
 #         'kernel': ['poly'],
-#         'C': [0.01, 0.1, 1, 5, 10],
-#         'gamma': [0.1, 0.5, 1, 0.01],
-#         'degree': [2, 3, 4, 5]
+#         'C': [0.01,0.1,5],
+#         'gamma': [0.1, 0.5, 0.01],
+#         'degree': [2, 3]
 #     },
 #     {
 #         'kernel': ['sigmoid', 'rbf'],
-#         'C': [0.01, 0.1, 1, 5, 10],
-#         'gamma': [0.1, 0.5, 1, 0.01]
+#         'C': [0.01,0.1,5],
+#         'gamma': [0.1, 0.5, 0.01],
 #     }
 # ]
 
@@ -132,9 +131,9 @@ fk = KFold(n_splits=3)
 # print("Mejor accuracy:")
 # print(busqueda.best_score_)
 
-arbol=DecisionTreeClassifier(criterion='gini',min_impurity_decrease=0.0)
-arbol.fit(X_grup_train,Y_grup_train)
-print(arbol.get_depth())
+# arbol=DecisionTreeClassifier(criterion='gini',min_impurity_decrease=0.0)
+# arbol.fit(X_grup_train,Y_grup_train)
+# print(arbol.get_depth())
 ############################# busqueda de hiperparametros a pata ###################################################
 # # rango de constantes de SVM
 
@@ -266,3 +265,23 @@ print(arbol.get_depth())
 # print(f"Ratios obtenidos = {vector_aciertos_SVC}")
 # print(f"Media = {media_mlp:.4f} | Varianza = {varianza_mlp:.6f}")
 
+
+
+################## MEJORES HIPERPARAMETROS #################################
+capas = (20,40)
+activation = 'relu'
+eta = 0.05
+epocas = 1000
+mlp = MLPClassifier(hidden_layer_sizes=capas,activation=activation,solver='adam',learning_rate_init=eta,learning_rate='adaptive',max_iter=epocas)
+mlp.fit(X_grup_train,Y_grup_train)
+print(mlp.score(X_grup_test,Y_grup_test))
+
+
+svm = SVC(kernel='rbf', C=5, gamma=0.01)
+svm.fit(X_grup_train, Y_grup_train)
+print(svm.score(X_grup_test,Y_grup_test))
+
+
+dt = DecisionTreeClassifier(criterion='gini', min_impurity_decrease=0.0)
+dt.fit(X_grup_train, Y_grup_train)
+print(dt.score(X_grup_test,Y_grup_test))

@@ -41,7 +41,39 @@ print(X_indv_train.shape)
 
 
 
-fk = KFold(n_splits=3)
+# fk = KFold(n_splits=3)
+################################## Busqueda usando gridsearch ###########################################################################
+
+# parametros = [
+#     {
+#         'kernel': ['poly'],
+#         'C': [0.01,0.1,5],
+#         'gamma': [0.1, 0.5, 0.01],
+#         'degree': [2, 3]
+#     },
+#     {
+#         'kernel': ['sigmoid', 'rbf'],
+#         'C': [0.01,0.1,5],
+#         'gamma': [0.1, 0.5, 0.01],
+#     }
+# ]
+
+# busqueda = GridSearchCV(
+#     estimator=SVC(),
+#     param_grid=parametros,
+#     cv=fk,
+#     scoring='accuracy',
+#     n_jobs=-1,
+#     verbose=2
+# )
+
+# busqueda.fit(X_indv_train, Y_indv_train)
+
+# print("Mejores hiperparámetros:")
+# print(busqueda.best_params_)
+
+# print("Mejor accuracy:")
+# print(busqueda.best_score_)
 
 ######################### busqueda en arbol #########################################
 ################################################### Arbol de decisión ###############################################################
@@ -73,38 +105,38 @@ fk = KFold(n_splits=3)
 ###################### MUlticapa ############################
 #################### Busqueda de hiperparametros en MLPC ################################
 
-parametros = [
-    {
-        'hidden_layer_sizes': [(10,10),(10,20),(10,40),(10,80),(10,100),(10,160),
-                               (20,10),(20,20),(20,40),(20,80),(20,100),(20,160),
-                               (40,10),(40,20),(40,40),(40,80),(40,100),(40,160),
-                               (80,10),(80,20),(80,40),(80,80),(80,100),(80,160),
-                               (100,10),(100,20),(100,40),(100,80),(100,100),(100,160)],
-        'activation': ['relu','logistic'],
-        'solver':['adam','sgd'],
-        'learning_rate_init':[0.01,0.1],
-        'learning_rate':['adaptive'],
-        'max_iter':[200],
-        'n_iter_no_change':[100] 
-    }
-]
+# parametros = [
+#     {
+#         'hidden_layer_sizes': [(10,10),(10,20),(10,40),(10,80),(10,100),(10,160),
+#                                (20,10),(20,20),(20,40),(20,80),(20,100),(20,160),
+#                                (40,10),(40,20),(40,40),(40,80),(40,100),(40,160),
+#                                (80,10),(80,20),(80,40),(80,80),(80,100),(80,160),
+#                                (100,10),(100,20),(100,40),(100,80),(100,100),(100,160)],
+#         'activation': ['relu','logistic'],
+#         'solver':['adam','sgd'],
+#         'learning_rate_init':[0.01,0.1],
+#         'learning_rate':['adaptive'],
+#         'max_iter':[200],
+#         'n_iter_no_change':[100] 
+#     }
+# ]
 
-busqueda = GridSearchCV(
-    estimator=MLPClassifier(),
-    param_grid=parametros,
-    cv=fk,
-    scoring='accuracy',
-    n_jobs=-1,
-    verbose=2
-)
+# busqueda = GridSearchCV(
+#     estimator=MLPClassifier(),
+#     param_grid=parametros,
+#     cv=fk,
+#     scoring='accuracy',
+#     n_jobs=-1,
+#     verbose=2
+# )
 
-busqueda.fit(X_indv_train, Y_indv_train)
+# busqueda.fit(X_indv_train, Y_indv_train)
 
-print("Mejores hiperparámetros:")
-print(busqueda.best_params_)
+# print("Mejores hiperparámetros:")
+# print(busqueda.best_params_)
 
-print("Mejor accuracy:")
-print(busqueda.best_score_)
+# print("Mejor accuracy:")
+# print(busqueda.best_score_)
 #########################################################################
 # # Constantes MLP
 # eta = 0.05
@@ -169,3 +201,25 @@ print(busqueda.best_score_)
 # print(f"Ratios obtenidos = {vector_aciertos_SVC}")
 # print(f"Media = {media_mlp:.4f} | Varianza = {varianza_mlp:.6f}")
 
+
+
+################## MEJORES HIPERPARAMETROS #################################
+capas = (80,10)
+activation = 'relu'
+eta = 0.01
+epocas = 1000
+solver = 'sgd'
+n_iter_no_change = 10
+mlp = MLPClassifier(hidden_layer_sizes=capas,activation=activation,solver=solver,learning_rate='adaptive',learning_rate_init=eta,max_iter=epocas, n_iter_no_change=n_iter_no_change)
+mlp.fit(X_indv_train,Y_indv_train)
+print(mlp.score(X_indv_test,Y_indv_test))
+
+
+svm = SVC(kernel='rbf', C=15, gamma=0.05)
+svm.fit(X_indv_train, Y_indv_train)
+print(svm.score(X_indv_train,Y_indv_train))
+print(svm.score(X_indv_test,Y_indv_test))
+
+# dt = DecisionTreeClassifier(criterion='gini', min_impurity_decrease=0.0)
+# dt.fit(X_indv_train, Y_indv_train)
+# print(dt.score(X_indv_test,Y_indv_test))
